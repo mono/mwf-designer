@@ -1,0 +1,96 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	WorkingDir="."
+	VCSProject="Subversion:">
+	<Config
+		Name="Release"
+		CompilerConfigName="GCC-4.1.2-i586-suse-linux"
+		OutputFile="">
+		<Menu>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw"
+				ClearProcessBuffer="1"
+				DependsRef="Release">
+				<Exec CmdLine="make"/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				RunFromDir="%rw"
+				CaptureOutputWith="ProcessBuffer"
+				BuildFirst="1"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make run"/>
+			</Target>
+			<Target
+				Name="Build MS_NET"
+				MenuCaption="&amp;Build MS_NET"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="csc -debug -d:NET_2_0 -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:..\build\mwf-designer.exe %{*.cs}"/>
+			</Target>
+			<Target
+				Name="Build against Mono.Design"
+				MenuCaption="&amp;Build against Mono.Design"
+				CaptureOutputWith="ProcessBuffer"
+				ClearProcessBuffer="1"
+				RunFromDir="%rp"
+				SaveOption="SaveWorkspaceFiles">
+				<Exec CmdLine="make mono-design"/>
+			</Target>
+		</Menu>
+		<Includes>
+			<Include Dir="&lt;double click here to add another entry&gt;"/>
+		</Includes>
+		<Dependencies Name="Release">
+			<Dependency Project="../Mono.Design/Mono.Design.vpj"/>
+		</Dependencies>
+	</Config>
+	<CustomFolders>
+	</CustomFolders>
+	<Files AutoFolders="DirectoryView">
+		<Folder Name="deps">
+			<F N="deps/ICSharpCode.NRefactory.dll"/>
+		</Folder>
+		<Folder Name="src">
+			<Folder Name="DesignTime">
+				<F N="src/DesignTime/CodeProvider.cs"/>
+				<F N="src/DesignTime/CodeProviderDesignerLoader.cs"/>
+				<F N="src/DesignTime/CodeProviderEventBindingService.cs"/>
+				<F N="src/DesignTime/TypeResolutionService.cs"/>
+			</Folder>
+			<Folder Name="Project">
+				<F N="src/Project/Document.cs"/>
+				<F N="src/Project/References.cs"/>
+				<F N="src/Project/TemplateManager.cs"/>
+				<F N="src/Project/Workspace.cs"/>
+			</Folder>
+			<Folder Name="UI">
+				<F N="src/UI/MainView.cs"/>
+				<F N="src/UI/MainView.Designer.cs"/>
+				<F N="src/UI/NewFileDialog.cs"/>
+				<F N="src/UI/NewFileDialog.Designer.cs"/>
+				<F N="src/UI/PropertyGrid.cs"/>
+				<F N="src/UI/PropertyGrid.Designer.cs"/>
+				<F N="src/UI/ReferencesDialog.cs"/>
+				<F N="src/UI/ReferencesDialog.Designer.cs"/>
+				<F N="src/UI/Toolbox.cs"/>
+				<F N="src/UI/Toolbox.Designer.cs"/>
+			</Folder>
+			<F N="src/AssemblyInfo.cs"/>
+			<F N="src/Program.cs"/>
+		</Folder>
+		<F N="ChangeLog"/>
+		<F N="LICENSE"/>
+		<F
+			N="Makefile"
+			Type="Makefile"/>
+	</Files>
+</Project>
