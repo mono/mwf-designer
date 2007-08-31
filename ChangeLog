@@ -1,0 +1,5 @@
+2007-08-31  Ivan N. Zlatev <contact@i-nz.net>
+
+	* UI/ToolBoxList/*.cs: A new fancy Toolbox. Patch by J. Pobst.
+	* UI/Toolbox.cs, UI/Toolbox.Designer.cs: Delete old.
+	* all: Add license headers.

@@ -17,7 +17,7 @@
 				RunFromDir="%rw"
 				ClearProcessBuffer="1"
 				DependsRef="Release">
-				<Exec CmdLine="make"/>
+				<Exec CmdLine="make mono-design"/>
 			</Target>
 			<Target
 				Name="Execute"
@@ -27,7 +27,7 @@
 				CaptureOutputWith="ProcessBuffer"
 				BuildFirst="1"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="make run"/>
+				<Exec CmdLine="make mono-design-run"/>
 			</Target>
 			<Target
 				Name="Build MS_NET"
@@ -35,15 +35,6 @@
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
 				<Exec CmdLine="csc -debug -d:NET_2_0 -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:..\build\mwf-designer.exe %{*.cs}"/>
-			</Target>
-			<Target
-				Name="Build against Mono.Design"
-				MenuCaption="&amp;Build against Mono.Design"
-				CaptureOutputWith="ProcessBuffer"
-				ClearProcessBuffer="1"
-				RunFromDir="%rp"
-				SaveOption="SaveWorkspaceFiles">
-				<Exec CmdLine="make mono-design"/>
 			</Target>
 		</Menu>
 		<Includes>
@@ -73,6 +64,12 @@
 				<F N="src/Project/Workspace.cs"/>
 			</Folder>
 			<Folder Name="UI">
+				<Folder Name="ToolBoxList">
+					<F N="src/UI/ToolBoxList/ToolBoxGroupHeader.cs"/>
+					<F N="src/UI/ToolBoxList/ToolBoxGroupPanel.cs"/>
+					<F N="src/UI/ToolBoxList/ToolBoxList.cs"/>
+					<F N="src/UI/ToolBoxList/ToolBoxListItem.cs"/>
+				</Folder>
 				<F N="src/UI/MainView.cs"/>
 				<F N="src/UI/MainView.Designer.cs"/>
 				<F N="src/UI/NewFileDialog.cs"/>

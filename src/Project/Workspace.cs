@@ -123,7 +123,9 @@ namespace mwf_designer
 
 		private bool IsValidType (Type type)
 		{
-			if (!type.IsAbstract && !type.IsInterface && 
+			ToolboxItemAttribute toolboxAttribute = TypeDescriptor.GetAttributes (type)[typeof (ToolboxItemAttribute)] as ToolboxItemAttribute;
+			if (toolboxAttribute != ToolboxItemAttribute.None &&
+				!type.IsAbstract && !type.IsInterface &&
 				((type.Attributes & TypeAttributes.Public) == TypeAttributes.Public) && 
 				((type.Attributes & TypeAttributes.NestedFamily) != TypeAttributes.NestedFamily) && 
 				((type.Attributes & TypeAttributes.NestedFamORAssem) != TypeAttributes.NestedFamORAssem) && 

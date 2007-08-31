@@ -54,7 +54,7 @@ namespace mwf_designer
 		this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 		this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 		this.surfaceTabs = new System.Windows.Forms.TabControl();
-		this.toolbox = new mwf_designer.Toolbox();
+		this.toolbox = new mwf_designer.ToolBoxList();
 		this.propertyGrid = new mwf_designer.PropertyGrid();
 		this.mainMenu.SuspendLayout();
 		this.splitContainer1.Panel1.SuspendLayout();
@@ -346,7 +346,7 @@ namespace mwf_designer
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private PropertyGrid propertyGrid;
 	    private System.Windows.Forms.SplitContainer splitContainer2;
-	    private Toolbox toolbox;
+	    private ToolBoxList toolbox;
 	    private System.Windows.Forms.TabControl surfaceTabs;
     }
 }
