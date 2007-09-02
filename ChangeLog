@@ -1,5 +1,10 @@
 2007-09-02  Ivan N. Zlatev <contact@i-nz.net>
 
+	* UI/ToolBoxList/ToolBoxGroupHeader.cs: Make categories more
+	visually recognizable.
+
+2007-09-02  Ivan N. Zlatev <contact@i-nz.net>
+
 	* UI/ToolBoxList/ToolBoxList.cs: Rename default category 
 	from "All Controls" to "All".
 	* DesignTime/TypeResolutionService.cs: Implement ReferenceAssembly.

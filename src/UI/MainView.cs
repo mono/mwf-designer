@@ -101,7 +101,6 @@ namespace mwf_designer
 			_workspace = new Workspace ();
 			_workspace.ActiveDocumentChanged += delegate (object sender, ActiveDocumentChangedEventArgs args) {
 				propertyGrid.ActiveComponents = new object[] { GetPrimarySelection (args.NewDocument) };
-
 			};
 			_workspace.References.ReferencesChanged += delegate {
 				PopulateToolbox (toolbox, _workspace.References);

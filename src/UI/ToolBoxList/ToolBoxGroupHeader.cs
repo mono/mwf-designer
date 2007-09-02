@@ -42,6 +42,8 @@ namespace mwf_designer
                {
                        Size = new Size (200, 20);
                        SetStyle (ControlStyles.ResizeRedraw, true);
+					   BackColor = SystemColors.ControlDark;
+					   Font = new Font (this.Font, FontStyle.Bold);
                }
                #endregion
 
@@ -82,11 +84,11 @@ namespace mwf_designer
                        g.Clear (BackColor);
 
                        if (expanded)
-                               DrawDownChevron (g, new Point (7, 8), Pens.DarkGray);
+                               DrawDownChevron (g, new Point (7, 8), Pens.LightGray);
                        else
-                               DrawRightChevron (g, new Point (10, 5), Pens.DarkGray);
+                               DrawRightChevron (g, new Point (10, 5), Pens.LightGray);
 
-                       TextRenderer.DrawText (g, Text, Font, new Point (18, 2), Color.Black);
+                       TextRenderer.DrawText (g, Text, Font, new Point (18, 2), Color.White);
                }
                #endregion
 
