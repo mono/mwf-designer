@@ -124,7 +124,7 @@ namespace mwf_designer
 
 		public void ReferenceAssembly (AssemblyName name)
 		{
-			// TODO: no notimplemented exception because it is used indirectly by the toolboxservice
+			_references.AddReference (name.FullName);
 		}
 	}
 

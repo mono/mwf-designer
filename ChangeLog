@@ -1,3 +1,10 @@
+2007-09-02  Ivan N. Zlatev <contact@i-nz.net>
+
+	* UI/ToolBoxList/ToolBoxList.cs: Rename default category 
+	from "All Controls" to "All".
+	* DesignTime/TypeResolutionService.cs: Implement ReferenceAssembly.
+	* Project/Workspace, UI/MainView.cs: Toolbox categorization. 
+
 2007-08-31  Ivan N. Zlatev <contact@i-nz.net>
 
 	* UI/ToolBoxList/*.cs: A new fancy Toolbox. Patch by J. Pobst.

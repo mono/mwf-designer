@@ -115,8 +115,13 @@ namespace mwf_designer
 		private void PopulateToolbox (ToolBoxList toolbox, References references)
 		{
 			toolbox.Clear ();
-			foreach (ToolboxItem item in _workspace.GetToolboxItems ())
-				toolbox.AddToolboxItem (item);
+			foreach (ToolboxItem item in _workspace.GetToolboxItems ()) {
+				string category = (string) item.Properties["Category"];
+				if (category != null)
+					toolbox.AddToolboxItem (item, category);
+				else
+					toolbox.AddToolboxItem (item);
+			}
 		}
 
 		private void LoadDocument (string file, Workspace workspace)
