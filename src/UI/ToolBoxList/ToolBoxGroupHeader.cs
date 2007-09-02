@@ -29,94 +29,95 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace mwf_designer
+namespace mwf_designer 
 {
-       public class ToolBoxGroupHeader : UserControl
-       {
-               #region Fields
-               private bool expanded = true;
-               #endregion
+	public class ToolBoxGroupHeader : UserControl 
+	{
 
-               #region Public Constructor
-               public ToolBoxGroupHeader ()
-               {
-                       Size = new Size (200, 20);
-                       SetStyle (ControlStyles.ResizeRedraw, true);
-					   BackColor = SystemColors.ControlDark;
-					   Font = new Font (this.Font, FontStyle.Bold);
-               }
-               #endregion
+#region Fields
+		private bool expanded = true;
+#endregion
 
-               #region Public Properties
-               public bool Expanded {
-                       get { return expanded; }
-                       set {
-                               if (expanded != value) {
-                                       expanded = value;
-                                       Invalidate ();
-                               }
-                       }
-               }
-               #endregion
+#region Public Constructor
+		public ToolBoxGroupHeader ()
+		{
+			Size = new Size (200, 20);
+			SetStyle (ControlStyles.ResizeRedraw, true);
+			BackColor = SystemColors.ControlDark;
+			Font = new Font (this.Font, FontStyle.Bold);
+		}
+#endregion
 
-               #region Protected Methods
-               protected override void OnClick (EventArgs e)
-               {
-                       base.OnClick (e);
+#region Public Properties
+		public bool Expanded {
+			get { return expanded;}
+			set {
+				if (expanded != value) {
+					expanded = value;
+					Invalidate ();
+				}
+			}
+		}
+#endregion
 
-                       Expanded = !expanded;
-                       OnExpandedChanged (EventArgs.Empty);
-               }
+#region Protected Methods
+		protected override void OnClick (EventArgs e)
+		{
+			base.OnClick (e);
 
-               protected virtual void OnExpandedChanged (EventArgs e)
-               {
-                       EventHandler eh = (EventHandler)(Events[ExpandedChangedEvent]);
-                       if (eh != null)
-                               eh (this, e);
-               }
+			Expanded = !expanded;
+			OnExpandedChanged (EventArgs.Empty);
+		}
 
-               protected override void OnPaint (PaintEventArgs e)
-               {
-                       base.OnPaint (e);
+		protected virtual void OnExpandedChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events[ExpandedChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
 
-                       Graphics g = e.Graphics;
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			base.OnPaint (e);
 
-                       g.Clear (BackColor);
+			Graphics g = e.Graphics;
 
-                       if (expanded)
-                               DrawDownChevron (g, new Point (7, 8), Pens.LightGray);
-                       else
-                               DrawRightChevron (g, new Point (10, 5), Pens.LightGray);
+			g.Clear (BackColor);
 
-                       TextRenderer.DrawText (g, Text, Font, new Point (18, 2), Color.White);
-               }
-               #endregion
+			if (expanded)
+				DrawDownChevron (g, new Point (7, 8), Pens.LightGray);
+			else
+				DrawRightChevron (g, new Point (10, 5), Pens.LightGray);
 
-               #region Public Events
-               static object ExpandedChangedEvent = new object ();
+			TextRenderer.DrawText (g, Text, Font, new Point (18, 2), Color.White);
+		}
+#endregion
 
-               public event EventHandler ExpandedChanged {
-                       add { Events.AddHandler (ExpandedChangedEvent, value); }
-                       remove { Events.RemoveHandler (ExpandedChangedEvent, value); }
-               }
-               #endregion
+#region Public Events
+		static object ExpandedChangedEvent = new object ();
 
-               #region Private Methods
-               private void DrawDownChevron (Graphics g, Point location, Pen p)
-               {
-                       g.DrawLine (p, location.X, location.Y, location.X + 8, location.Y);
-                       g.DrawLine (p, location.X + 1, location.Y + 1, location.X + 7, location.Y + 1);
-                       g.DrawLine (p, location.X + 2, location.Y + 2, location.X + 6, location.Y + 2);
-                       g.DrawLine (p, location.X + 3, location.Y + 3, location.X + 5, location.Y + 3);
-               }
+		public event EventHandler ExpandedChanged {
+			add { Events.AddHandler (ExpandedChangedEvent, value);}
+			remove { Events.RemoveHandler (ExpandedChangedEvent, value);}
+		}
+#endregion
 
-               private void DrawRightChevron (Graphics g, Point location, Pen p)
-               {
-                       g.DrawLine (p, location.X, location.Y, location.X, location.Y + 8);
-                       g.DrawLine (p, location.X + 1, location.Y + 1, location.X + 1, location.Y + 7);
-                       g.DrawLine (p, location.X + 2, location.Y + 2, location.X + 2, location.Y + 6);
-                       g.DrawLine (p, location.X + 3, location.Y + 3, location.X + 3, location.Y + 5);
-               }
-               #endregion
-       }
+#region Private Methods
+		private void DrawDownChevron (Graphics g, Point location, Pen p)
+		{
+			g.DrawLine (p, location.X, location.Y, location.X + 8, location.Y);
+			g.DrawLine (p, location.X + 1, location.Y + 1, location.X + 7, location.Y + 1);
+			g.DrawLine (p, location.X + 2, location.Y + 2, location.X + 6, location.Y + 2);
+			g.DrawLine (p, location.X + 3, location.Y + 3, location.X + 5, location.Y + 3);
+		}
+
+		private void DrawRightChevron (Graphics g, Point location, Pen p)
+		{
+			g.DrawLine (p, location.X, location.Y, location.X, location.Y + 8);
+			g.DrawLine (p, location.X + 1, location.Y + 1, location.X + 1, location.Y + 7);
+			g.DrawLine (p, location.X + 2, location.Y + 2, location.X + 2, location.Y + 6);
+			g.DrawLine (p, location.X + 3, location.Y + 3, location.X + 3, location.Y + 5);
+		}
+#endregion
+	}
 }

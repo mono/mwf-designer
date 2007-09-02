@@ -30,114 +30,115 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Design;
 
-namespace mwf_designer
+namespace mwf_designer 
 {
-       public class ToolBoxListItem : UserControl
-       {
-               #region Fields
-               private bool hover;
-               private Image image;
-               private bool selected;
-               private ToolboxItem tool_box_item;
-               #endregion
+	public class ToolBoxListItem : UserControl 
+	{
 
-               #region Public Constructor
-               public ToolBoxListItem (ToolboxItem toolBoxItem)
-               {
-                       Size = new Size (150, 20);
+#region Fields
+		private bool hover;
+		private Image image;
+		private bool selected;
+		private ToolboxItem tool_box_item;
+#endregion
 
-                       SetStyle (ControlStyles.ResizeRedraw, true);
+#region Public Constructor
+		public ToolBoxListItem (ToolboxItem toolBoxItem)
+		{
+			Size = new Size (150, 20);
 
-                       Text = toolBoxItem.DisplayName;
+			SetStyle (ControlStyles.ResizeRedraw, true);
 
-                       if (toolBoxItem.Bitmap != null)
-                               image = toolBoxItem.Bitmap;
-                       else
-                               image = SystemIcons.Exclamation.ToBitmap ();
+			Text = toolBoxItem.DisplayName;
 
-                       tool_box_item = toolBoxItem;
-               }
-               #endregion
+			if (toolBoxItem.Bitmap != null)
+				image = toolBoxItem.Bitmap;
+			else
+				image = SystemIcons.Exclamation.ToBitmap ();
 
-               #region Public Properties
-               public bool Selected {
-                       get { return selected; }
-                       set {
-                               if (selected != value) {
-                                       selected = value;
-                                       Invalidate ();
-                               }
-                       }
-               }
+			tool_box_item = toolBoxItem;
+		}
+#endregion
 
-               public ToolboxItem ToolBoxItem {
-                       get { return tool_box_item; }
-               }
-               #endregion
+#region Public Properties
+		public bool Selected {
+			get { return selected;}
+			set {
+				if (selected != value) {
+					selected = value;
+					Invalidate ();
+				}
+			}
+		}
 
-               #region Public Methods
-               public void Deselect ()
-               {
-                       if (selected) {
-                               selected = false;
-                               Invalidate ();
-                       }
-               }
-               #endregion
+		public ToolboxItem ToolBoxItem {
+			get { return tool_box_item;}
+		}
+#endregion
 
-               #region Protected Methods
-               protected override void OnClick (EventArgs e)
-               {
-                       selected = true;
-                       Invalidate ();
+#region Public Methods
+		public void Deselect ()
+		{
+			if (selected) {
+				selected = false;
+				Invalidate ();
+			}
+		}
+#endregion
 
-                       base.OnClick (e);
-               }
+#region Protected Methods
+		protected override void OnClick (EventArgs e)
+		{
+			selected = true;
+			Invalidate ();
 
-               protected override void OnMouseEnter (EventArgs e)
-               {
-                       base.OnMouseEnter (e);
+			base.OnClick (e);
+		}
 
-                       hover = true;
-                       Invalidate ();
-               }
+		protected override void OnMouseEnter (EventArgs e)
+		{
+			base.OnMouseEnter (e);
 
-               protected override void OnMouseLeave (EventArgs e)
-               {
-                       base.OnMouseLeave (e);
+			hover = true;
+			Invalidate ();
+		}
 
-                       hover = false;
-                       Invalidate ();
-               }
+		protected override void OnMouseLeave (EventArgs e)
+		{
+			base.OnMouseLeave (e);
 
-               protected override void OnPaintBackground (PaintEventArgs e)
-               {
-                       base.OnPaintBackground (e);
+			hover = false;
+			Invalidate ();
+		}
 
-                       if (hover) {
-                               using (SolidBrush b = new SolidBrush (ProfessionalColors.ButtonPressedGradientMiddle))
-                                       e.Graphics.FillRectangle (b, ClientRectangle);
+		protected override void OnPaintBackground (PaintEventArgs e)
+		{
+			base.OnPaintBackground (e);
 
-                               using (Pen p = new Pen (ProfessionalColors.ButtonPressedHighlightBorder))
-                                       e.Graphics.DrawRectangle (p, new Rectangle (0, 0, Width - 1, Height - 1));
-                       } else if (selected) {
-                               using (SolidBrush b = new SolidBrush (ProfessionalColors.ButtonSelectedGradientMiddle))
-                                       e.Graphics.FillRectangle (b, ClientRectangle);
+			if (hover) {
+				using (SolidBrush b = new SolidBrush (ProfessionalColors.ButtonPressedGradientMiddle))
+				e.Graphics.FillRectangle (b, ClientRectangle);
 
-                               using (Pen p = new Pen (ProfessionalColors.ButtonSelectedHighlightBorder))
-                                       e.Graphics.DrawRectangle (p, new Rectangle (0, 0, Width - 1, Height - 1));
-                       }
-               }
+				using (Pen p = new Pen (ProfessionalColors.ButtonPressedHighlightBorder))
+				e.Graphics.DrawRectangle (p, new Rectangle (0, 0, Width - 1, Height - 1));
+			} else if (selected) {
+				using (SolidBrush b = new SolidBrush (ProfessionalColors.ButtonSelectedGradientMiddle))
+				e.Graphics.FillRectangle (b, ClientRectangle);
 
-               protected override void OnPaint (PaintEventArgs e)
-               {
-                       base.OnPaint (e);
+				using (Pen p = new Pen (ProfessionalColors.ButtonSelectedHighlightBorder))
+				e.Graphics.DrawRectangle (p, new Rectangle (0, 0, Width - 1, Height - 1));
+			}
+		}
 
-                       if (image != null)
-                               e.Graphics.DrawImage (image, new Rectangle (2, 2, 16, 16));
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			base.OnPaint (e);
 
-                       TextRenderer.DrawText (e.Graphics, Text, Font, new Rectangle (20, 1, Width - 21, Height - 2), Color.Black, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
-               }
-               #endregion
-       }
+			if (image != null)
+				e.Graphics.DrawImage (image, new Rectangle (2, 2, 16, 16));
+
+			TextRenderer.DrawText (e.Graphics, Text, Font, new Rectangle (20, 1, Width - 21, Height - 2), Color.Black, TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
+		}
+#endregion
+	}
 }

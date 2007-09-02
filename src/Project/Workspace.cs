@@ -156,11 +156,15 @@ namespace mwf_designer
 		{
 			List<ToolboxItem> list = new List<ToolboxItem>();
 
-			foreach (Assembly assembly in _references.Assemblies)
-				foreach (Type type in assembly.GetTypes())
-					if (IsValidToolType (type) && HasPublicEmptyCtor (type))
-						list.Add (new ToolboxItem (type));
-
+			foreach (Assembly assembly in _references.Assemblies) {
+				foreach (Type type in assembly.GetTypes()) {
+					if (IsValidToolType (type) && HasPublicEmptyCtor (type)) {
+						ToolboxItem tool = new ToolboxItem (type);
+						tool.Properties["Category"] = "All";
+						list.Add (tool);
+					}
+				}
+			}
 
 			foreach (Type type in commonComponents) {
 				ToolboxItem tool = new ToolboxItem (type);

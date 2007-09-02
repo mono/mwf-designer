@@ -29,122 +29,123 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace mwf_designer
+namespace mwf_designer 
 {
-       public class ToolBoxGroupPanel : UserControl
-       {
-               #region Fields
-               private ToolBoxGroupHeader GroupHeader1;
-               private Panel ItemPanel;
-               #endregion
+	public class ToolBoxGroupPanel : UserControl 
+	{
 
-               #region Public Constructor
-               public ToolBoxGroupPanel ()
-               {
-                       ItemPanel = new Panel ();
-                       GroupHeader1 = new ToolBoxGroupHeader ();
-                       SuspendLayout ();
+#region Fields
+		private ToolBoxGroupHeader GroupHeader1;
+		private Panel ItemPanel;
+#endregion
 
-                       //
-                       // ItemPanel
-                       //
-                       ItemPanel.Dock = DockStyle.Fill;
-                       ItemPanel.Location = new Point (1, 21);
-                       ItemPanel.Name = "ItemPanel";
-                       ItemPanel.Size = new Size (198, 0);
-                       ItemPanel.TabIndex = 1;
-                       //
-                       // GroupHeader1
-                       //
-                       GroupHeader1.Dock = DockStyle.Top;
-                       GroupHeader1.Expanded = true;
-                       GroupHeader1.Location = new Point (1, 1);
-                       GroupHeader1.Margin = new Padding (0);
-                       GroupHeader1.Name = "GroupHeader1";
-                       GroupHeader1.Padding = new Padding (1, 1, 1, 0);
-                       GroupHeader1.Size = new Size (198, 20);
-                       GroupHeader1.TabIndex = 0;
+#region Public Constructor
+		public ToolBoxGroupPanel ()
+		{
+			ItemPanel = new Panel ();
+			GroupHeader1 = new ToolBoxGroupHeader ();
+			SuspendLayout ();
 
-                       Controls.Add (this.ItemPanel);
-                       Controls.Add (this.GroupHeader1);
-                       Name = "ToolBoxGroupPanel";
-                       Padding = new System.Windows.Forms.Padding (1, 1, 1, 0);
-                       Size = new System.Drawing.Size (200, 20);
-                       ResumeLayout (false);
+			//
+			// ItemPanel
+			//
+			ItemPanel.Dock = DockStyle.Fill;
+			ItemPanel.Location = new Point (1, 21);
+			ItemPanel.Name = "ItemPanel";
+			ItemPanel.Size = new Size (198, 0);
+			ItemPanel.TabIndex = 1;
+			//
+			// GroupHeader1
+			//
+			GroupHeader1.Dock = DockStyle.Top;
+			GroupHeader1.Expanded = true;
+			GroupHeader1.Location = new Point (1, 1);
+			GroupHeader1.Margin = new Padding (0);
+			GroupHeader1.Name = "GroupHeader1";
+			GroupHeader1.Padding = new Padding (1, 1, 1, 0);
+			GroupHeader1.Size = new Size (198, 20);
+			GroupHeader1.TabIndex = 0;
 
-                       GroupHeader1.ExpandedChanged += new EventHandler (GroupHeader1_ExpandedChanged);
-                       ItemPanel.ControlAdded += new ControlEventHandler (ItemPanel_ControlAdded);
-                       Layout += new LayoutEventHandler (ToolBoxGroupPanel_Layout);
-               }
-               #endregion
+			Controls.Add (this.ItemPanel);
+			Controls.Add (this.GroupHeader1);
+			Name = "ToolBoxGroupPanel";
+			Padding = new System.Windows.Forms.Padding (1, 1, 1, 0);
+			Size = new System.Drawing.Size (200, 20);
+			ResumeLayout (false);
 
-               #region Public Properties
-               public bool Expanded {
-                       get { return GroupHeader1.Expanded; }
-                       set {
-                               if (GroupHeader1.Expanded != value) {
-                                       GroupHeader1.Expanded = value;
-                                       PerformLayout ();
-                               }
-                       }
-               }
+			GroupHeader1.ExpandedChanged += new EventHandler (GroupHeader1_ExpandedChanged);
+			ItemPanel.ControlAdded += new ControlEventHandler (ItemPanel_ControlAdded);
+			Layout += new LayoutEventHandler (ToolBoxGroupPanel_Layout);
+		}
+#endregion
 
-               public ControlCollection Items {
-                       get { return ItemPanel.Controls; }
-               }
+#region Public Properties
+		public bool Expanded {
+			get { return GroupHeader1.Expanded;}
+			set {
+				if (GroupHeader1.Expanded != value) {
+					GroupHeader1.Expanded = value;
+					PerformLayout ();
+				}
+			}
+		}
 
-               public override string Text {
-                       get { return GroupHeader1.Text; }
-                       set { GroupHeader1.Text = value; }
-               }
-               #endregion
+		public ControlCollection Items {
+			get { return ItemPanel.Controls;}
+		}
 
-               #region Private Methods
-               private void ToolBoxGroupPanel_Layout (object sender, LayoutEventArgs e)
-               {
-                       // Figure out how tall we need to be
-                       if (GroupHeader1.Expanded) {
-                               int y = 0;
+		public override string Text {
+			get { return GroupHeader1.Text;}
+			set { GroupHeader1.Text = value;}
+		}
+#endregion
 
-                               foreach (Control c in Items)
-                                       if (c.Enabled)
-                                               y += c.Height;
+#region Private Methods
+		private void ToolBoxGroupPanel_Layout (object sender, LayoutEventArgs e)
+		{
+			// Figure out how tall we need to be
+			if (GroupHeader1.Expanded) {
+				int y = 0;
 
-                               if (y == 0)
-                                       Visible = false;
-                               else
-                                       Visible = true;
+				foreach (Control c in Items)
+					if (c.Enabled)
+						y += c.Height;
 
-                               Height = y + GroupHeader1.Height + 1;
-                       } else {
-                               Height = GroupHeader1.Bottom;
-                       }
-               }
+				if (y == 0)
+					Visible = false;
+				else
+					Visible	= true;
 
-               private void ItemPanel_ControlAdded (object sender, ControlEventArgs e)
-               {
-                       // Sort incoming items
-                       ToolBoxListItem new_tbi = (ToolBoxListItem)e.Control;
+				Height = y + GroupHeader1.Height + 1;
+			} else {
+				Height = GroupHeader1.Bottom;
+			}
+		}
 
-                       foreach (Control c in ItemPanel.Controls) {
-                               ToolBoxListItem tbi = c as ToolBoxListItem;
+		private void ItemPanel_ControlAdded (object sender, ControlEventArgs e)
+		{
+			// Sort incoming items
+			ToolBoxListItem new_tbi = (ToolBoxListItem)e.Control;
 
-                               if (tbi == null)
-                                       continue;
+			foreach (Control c in ItemPanel.Controls) {
+				ToolBoxListItem tbi = c as ToolBoxListItem;
 
-                               if (string.Compare (new_tbi.Text, tbi.Text) > 0) {
-                                       ItemPanel.Controls.SetChildIndex (new_tbi, ItemPanel.Controls.GetChildIndex (tbi));
-                                       break;
-                               }
-                       }
+				if (tbi == null)
+					continue;
 
-                       e.Control.Dock = DockStyle.Top;
-               }
+				if (string.Compare (new_tbi.Text, tbi.Text) > 0) {
+					ItemPanel.Controls.SetChildIndex (new_tbi, ItemPanel.Controls.GetChildIndex (tbi));
+					break;
+				}
+			}
 
-               private void GroupHeader1_ExpandedChanged (object sender, EventArgs e)
-               {
-                       PerformLayout ();
-               }
-               #endregion
-       }
+			e.Control.Dock = DockStyle.Top;
+		}
+
+		private void GroupHeader1_ExpandedChanged (object sender, EventArgs e)
+		{
+			PerformLayout ();
+		}
+#endregion
+	}
 }
