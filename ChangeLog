@@ -1,3 +1,8 @@
+2007-09-06  Jonathan Pobst <monkey@jpobst.com>
+
+	* UI/ToolBoxList/ToolBoxGroupPanel.cs: After we muck around with
+	ControlAdded, we need another layout to fix everything up.
+
 2007-09-02  Ivan N. Zlatev <contact@i-nz.net>
 
 	* UI/ToolBoxList/*.cs: spaces to tabs.

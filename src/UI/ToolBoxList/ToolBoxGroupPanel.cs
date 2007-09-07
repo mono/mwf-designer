@@ -140,6 +140,7 @@ namespace mwf_designer
 			}
 
 			e.Control.Dock = DockStyle.Top;
+			PerformLayout ();
 		}
 
 		private void GroupHeader1_ExpandedChanged (object sender, EventArgs e)
