@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst <monkey@jpobst.com>
 
+	* UI/MainView.cs: Use Suspend/ResumeLayout for performance increase
+	when populating the toolbox.
+
+2007-09-06  Jonathan Pobst <monkey@jpobst.com>
+
 	* UI/ToolBoxList/ToolBoxGroupPanel.cs: After we muck around with
 	ControlAdded, we need another layout to fix everything up.
 

@@ -113,6 +113,7 @@ namespace mwf_designer
 		//
 		private void PopulateToolbox (ToolBoxList toolbox, References references)
 		{
+			toolbox.SuspendLayout ();
 			toolbox.Clear ();
 			foreach (ToolboxItem item in _workspace.GetToolboxItems ()) {
 				string category = (string) item.Properties["Category"];
@@ -121,6 +122,7 @@ namespace mwf_designer
 				else
 					toolbox.AddToolboxItem (item);
 			}
+			toolbox.ResumeLayout ();
 		}
 
 		private void LoadDocument (string file, Workspace workspace)
