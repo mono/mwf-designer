@@ -1,3 +1,7 @@
+2007-09-09  Ivan N. Zlatev <contact@i-nz.net>
+
+	* Makefile: fix build.
+
 2007-09-06  Jonathan Pobst <monkey@jpobst.com>
 
 	* UI/MainView.cs: Use Suspend/ResumeLayout for performance increase

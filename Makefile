@@ -1,4 +1,4 @@
-SOURCES=src/*.cs src/*/*.cs
+SOURCES=src/*.cs src/*/*.cs src/*/*/*.cs
 BUILD_DIR=build
 MD_BUILD_DIR=../build
 DEPS_DIR = deps
