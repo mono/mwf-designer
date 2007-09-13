@@ -66,7 +66,7 @@ namespace mwf_designer
 			OpenFileDialog dialog = new OpenFileDialog ();
 			dialog.CheckFileExists = true;
 			dialog.Multiselect = true;
-			dialog.Filter = ".Net Assembly (*.dll)|*.dll";
+			dialog.Filter = ".Net Assembly (*.dll, *.exe)|*.dll;*.exe";
 			if (dialog.ShowDialog () == DialogResult.OK) {
 				foreach (string file in dialog.FileNames) {
 					if (_references.AddReference (file))
