@@ -74,10 +74,13 @@ namespace mwf_designer
 
 		private IComponent PrimarySelection {
 			get {
-				if (this.ActiveComponents.Length > 0) {
-					ISelectionService selectionService = ((IComponent)ActiveComponents[0]).Site.GetService (typeof (ISelectionService)) as ISelectionService;
-					if (selectionService != null)
-						return (IComponent) selectionService.PrimarySelection;
+				if (this.ActiveComponents != null && ActiveComponents.Length > 0) {
+					IComponent component = ActiveComponents[0] as IComponent;
+					if (component != null && component.Site != null) {
+						ISelectionService selectionService = component.Site.GetService (typeof (ISelectionService)) as ISelectionService;
+						if (selectionService != null)
+							return selectionService.PrimarySelection as IComponent;
+					}
 				}
 				return null;
 			}
@@ -94,6 +97,9 @@ namespace mwf_designer
 				_componentsCombo.SelectedIndex = _componentsCombo.Items.IndexOf (component.Site.Name);
 				_propertyGrid.SelectedObject = component; 
 				EnableNotification (component);
+			} else if (components.Length == 0) {
+				_propertyGrid.SelectedObjects = components;
+				_componentsCombo.Items.Clear ();
 			} else {
 				_propertyGrid.SelectedObjects = components;
 				_componentsCombo.SelectedIndex = -1;
@@ -145,7 +151,16 @@ namespace mwf_designer
 
 		private void OnComponentRemoving (object sender, ComponentEventArgs args)
 		{
-			_componentsCombo.Items.Remove (args.Component.Site.Name);
+			int index = -1;
+			for (int i=0; i < _componentsCombo.Items.Count; i++) {
+				if (_componentsCombo.Items[i] == args.Component) {
+					index = i;
+					break;
+				}
+			}
+			if (index != -1)
+				_componentsCombo.Items.RemoveAt (index);
+			// MWF bug: _componentsCombo.Items.Remove (args.Component.Site.Name);
 		}
 
 		private void OnComponentRename (object sender, ComponentRenameEventArgs args)

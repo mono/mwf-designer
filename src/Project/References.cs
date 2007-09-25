@@ -43,6 +43,12 @@ namespace mwf_designer
 			_assemblies = new List<Assembly> ();
 		}
 
+		public void Dispose ()
+		{
+			_assemblies.Clear ();
+			_assemblies = null;
+		}
+
 		public void AddReference (Assembly assembly)
 		{
 			if (assembly == null)

@@ -1,3 +1,28 @@
+2007-09-26  Ivan N. Zlatev <contact@i-nz.net>
+
+	* DesignTime/CodeProviderDesignerLoader.cs: SetUIDirty to 
+	clear the errors.
+	* UI/ErrorListTabPage.cs, UI/ErrorList.cs: new TabPage.
+	* UI/MainView.cs: refactor to use the ErrorListTabPage.
+	* Project/Document.cs, UI/MainView.cs: Handle failed to 
+	load documents.
+	* Project/Document.cs: add disposing behavior.
+	* Project/Document.cs, Project/Workspace.cs, UI/MainView.cs:
+	Move document load/close logic to the workspace.
+	* Project/Workspace.cs, UI/MainView.cs: documents now can be
+	associated with a key object.
+	* UI/PropertyGrid.cs: NRE fixes.
+
+2007-09-19  Ivan N. Zlatev <contact@i-nz.net>
+
+	* UI/MainView.cs: Show the Errors tab.
+
+2007-09-18  Ivan N. Zlatev <contact@i-nz.net>
+
+	* DesignTime/CodeProviderDesignerLoader.cs: Make use of IUIService
+	to report errors.
+	* UI/ErrorList.cs: Add.
+
 2007-09-13  Ivan N. Zlatev <contact@i-nz.net>
 	
 	* UI/ReferencesDialog.cs: Allow referencing executables.

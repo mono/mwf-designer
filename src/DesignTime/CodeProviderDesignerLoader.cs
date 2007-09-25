@@ -26,12 +26,15 @@
 //
 
 using System;
+using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.IO;
+using System.Windows.Forms.Design;
+
 
 #if WITH_MONO_DESIGN
 using Mono.Design;
@@ -57,7 +60,7 @@ namespace mwf_designer
 		}
 
 		protected override ITypeResolutionService TypeResolutionService { 
-			get { return base.LoaderHost.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService; }
+			get { return base.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService; }
 		}
 
 		protected override CodeCompileUnit Parse ()
@@ -68,6 +71,32 @@ namespace mwf_designer
 		protected override void Write (CodeCompileUnit unit)
 		{
 			_provider.Write (unit);
+		}
+
+		protected override void OnEndLoad (bool successful, ICollection errors)
+		{
+			base.OnEndLoad (successful, errors);
+			ReportErrors (errors);
+		}
+
+		protected override void ReportFlushErrors (ICollection errors)
+		{
+			base.ReportFlushErrors (errors);
+			ReportErrors (errors);
+		}
+
+		private void ReportErrors (ICollection errors)
+		{
+			IUIService service = base.GetService (typeof (IUIService)) as IUIService;
+			if (service != null) {
+				service.SetUIDirty (); // clears the error list
+				foreach (object error in errors) {
+					if (error is Exception)
+						service.ShowError ((Exception) error);
+					else if (error is string)
+						service.ShowError ((string) error);
+				}
+			}
 		}
 	}
 }

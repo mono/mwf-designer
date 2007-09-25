@@ -40,6 +40,7 @@ namespace mwf_designer
 {
 	internal class Document : IDisposable
 	{
+		private bool _loaded;
 
 		private CodeProvider _codeProvider;
 		private Workspace _workspace;
@@ -56,10 +57,14 @@ namespace mwf_designer
 				throw new ArgumentNullException ("fileName");
 			_fileName = fileName;
 			_workspace = workspace;
+			_loaded = false;
 		}
 
-		public void Load ()
+		public bool Load ()
 		{
+			if (_loaded)
+				return true;
+			_loaded = false;
 			_modified = false;
 
 			// Initialize code provider, loader and surface
@@ -74,22 +79,34 @@ namespace mwf_designer
 			container.AddService (typeof (IEventBindingService), new CodeProviderEventBindingService (_codeProvider, 
 																									 (IServiceProvider) container));
 			_surface.BeginLoad (_loader);
+			if (_surface.IsLoaded) {
+				_loaded = true;
+				// Mark as Modified on ComponentChanged
+				//
+				IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
+				changeService.ComponentChanged += delegate {
+					_modified = true;
+					if (Modified != null)
+						Modified (this, EventArgs.Empty);
+				};
+				if (Loaded != null)
+					Loaded (this, EventArgs.Empty);
+			} else {
+				_surface.Dispose ();
+				_loader.Dispose ();
+			}
 
-			// Mark as Modified on ComponentChanged
-			//
-			IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
-			changeService.ComponentChanged += delegate {
-				_modified = true;
-				if (Modified != null)
-					Modified (this, EventArgs.Empty);
-			};
-			if (Loaded != null)
-				Loaded (this, EventArgs.Empty);
+			return _loaded;
+		}
+
+		public bool LoadSuccessful {
+			get { return _loaded; }
+			set { _loaded = value; }
 		}
 
 		public void Save ()
 		{
-			if (_modified) {
+			if (_loaded && _modified) {
 				_surface.Flush ();
 				_modified = false;
 			}
@@ -123,6 +140,7 @@ namespace mwf_designer
 		public void Dispose ()
 		{
 			_surface.Dispose ();
+			_codeProvider = null;
 		}
 
 		public event EventHandler Loaded;

@@ -14,7 +14,14 @@ namespace mwf_designer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainView());
+			try {
+				Application.Run(new MainView());
+			} catch (Exception e) {
+				MessageBox.Show ("A fatal error occured. Please file a bug report with the following details (Ctrl-C to copy to clipboard):" + 
+								 System.Environment.NewLine + System.Environment.NewLine +
+								 e.ToString (), "Fatal Error");
+				System.Windows.Forms.Application.Exit ();
+			}
         }
     }
 }

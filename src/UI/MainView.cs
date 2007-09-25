@@ -48,24 +48,13 @@ namespace mwf_designer
 	public partial class MainView : Form
 	{
 		Workspace _workspace;
+		private readonly string MODIFIED_MARKER = " *";
 
 		public MainView ()
 		{
 			InitializeComponent ();
 			toolbox.ToolPicked += OnToolbox_ToolPicked;
 			LoadWorkspace ();
-		}
-
-		private IComponent GetPrimarySelection (Document document)
-		{
-			if (document == null)
-				throw new ArgumentNullException ("document");
-
-			ISelectionService service = document.DesignSurface.GetService (typeof (ISelectionService)) as ISelectionService;
-			if (service != null)
-				return (IComponent) service.PrimarySelection;
-			else
-				return null;
 		}
 
 		private void openToolStripMenuItem_Click (object sender, EventArgs e)
@@ -99,14 +88,35 @@ namespace mwf_designer
 		private void LoadWorkspace ()
 		{
 			_workspace = new Workspace ();
-			_workspace.ActiveDocumentChanged += delegate (object sender, ActiveDocumentChangedEventArgs args) {
-				propertyGrid.ActiveComponents = new object[] { GetPrimarySelection (args.NewDocument) };
+			surfaceTabs.SelectedIndexChanged += delegate {
+				UpdateWorkspaceActiveDocument ();
 			};
+			_workspace.ActiveDocumentChanged += OnActiveDocumentChanged;
 			_workspace.References.ReferencesChanged += delegate {
 				PopulateToolbox (toolbox, _workspace.References);
 			};
 			_workspace.Services.AddService (typeof (IToolboxService), (IToolboxService) toolbox);
+			AddErrorsTab ();
 			_workspace.Load ();
+		}
+
+		private IComponent GetPrimarySelection (Document document)
+		{
+			if (document == null)
+				throw new ArgumentNullException ("document");
+
+			ISelectionService service = document.DesignSurface.GetService (typeof (ISelectionService)) as ISelectionService;
+			if (service != null)
+				return (IComponent) service.PrimarySelection;
+			else
+				return null;
+		}
+
+		private void AddErrorsTab ()
+		{
+			ErrorListTabPage errors = new ErrorListTabPage ();
+			surfaceTabs.TabPages.Add (errors);
+			_workspace.Services.AddService (typeof (IUIService), (IUIService) errors);
 		}
 
 		// Currently populates with all MWF Controls that have a public ctor with no params
@@ -127,20 +137,42 @@ namespace mwf_designer
 
 		private void LoadDocument (string file, Workspace workspace)
 		{
-			Document doc = new Document (file, workspace);
-			doc.Load ();
-			doc.Modified += delegate {
-				if (!surfaceTabs.TabPages[file].Text.EndsWith (" *"))
-					surfaceTabs.TabPages[file].Text += " *";
-			};
-			workspace.AddDocument (doc);
-			workspace.ActiveDocument = doc;
-			surfaceTabs.TabPages.Add (file, Path.GetFileNameWithoutExtension (file));
-			surfaceTabs.TabPages[file].Controls.Add ((Control)doc.DesignSurface.View);
-			surfaceTabs.SelectedTab = surfaceTabs.TabPages[file];
+			TabPage tab = new TabPage (Path.GetFileNameWithoutExtension (file));
+			tab.Name = file; // the key
+
+			// loads and associates the tab page with the document
+			Document doc = workspace.LoadDocument (file, tab); 
+			if (doc.LoadSuccessful) {
+				doc.Modified += OnDocumentModified;
+				workspace.ActiveDocument = doc;
+				tab.Controls.Add ((Control)doc.DesignSurface.View);
+				surfaceTabs.TabPages.Add (tab);
+				surfaceTabs.SelectedTab = surfaceTabs.TabPages[file];
+			} else {
+				workspace.CloseDocument (doc);
+				tab.Dispose ();
+			}
 		}
 
-		
+		private void OnDocumentModified (object sender, EventArgs args)
+		{
+			if (!surfaceTabs.SelectedTab.Text.EndsWith (MODIFIED_MARKER))
+				surfaceTabs.SelectedTab.Text += MODIFIED_MARKER;
+		}
+
+		private void OnActiveDocumentChanged (object sender, ActiveDocumentChangedEventArgs args)
+		{
+			object primarySelection = args.NewDocument != null ? GetPrimarySelection (args.NewDocument) : null;
+			propertyGrid.ActiveComponents = primarySelection != null ? new object[] { primarySelection } : new object[0];
+		}
+
+		private void CloseDocument (Document doc)
+		{
+			doc.Modified -= OnDocumentModified;
+			_workspace.CloseDocument (doc);
+			surfaceTabs.TabPages.Remove (surfaceTabs.SelectedTab);
+		}
+
 		private void newToolStripMenuItem_Click (object sender, EventArgs e)
 		{
 			NewFileDialog dialog = new NewFileDialog (TemplateManager.AvailableTemplates);
@@ -150,6 +182,15 @@ namespace mwf_designer
 				this.LoadDocument (dialog.File, _workspace);
 			}
 		}
+
+		private void UpdateWorkspaceActiveDocument ()
+		{
+			if (!(surfaceTabs.SelectedTab is ErrorListTabPage))
+				_workspace.ActiveDocument = _workspace.GetDocument (surfaceTabs.SelectedTab);
+			else
+				_workspace.ActiveDocument = null;
+		}
+
 
 		private void exitToolStripMenuItem_Click (object sender, EventArgs e)
 		{
@@ -166,12 +207,9 @@ namespace mwf_designer
 
 		private void closeToolStripMenuItem_Click (object sender, EventArgs e)
 		{
-			if (_workspace.ActiveDocument != null) {
-				if (_workspace.ActiveDocument.IsModified)
-					_workspace.ActiveDocument.Save ();
-				_workspace.ActiveDocument.Dispose ();
-				surfaceTabs.TabPages.Remove (surfaceTabs.SelectedTab);
-			}
+			if (!(surfaceTabs.SelectedTab is ErrorListTabPage))
+				if (_workspace.ActiveDocument != null)
+					CloseDocument (_workspace.ActiveDocument);
 		}
 
 		private void referencesToolStripMenuItem_Click (object sender, EventArgs e)

@@ -41,14 +41,14 @@ namespace mwf_designer
 	internal class Workspace
 	{
 
-		private List<Document> _documents;
+		private Dictionary<object, Document> _documents;
 		private Document _activeDocument;
 		private References _references;
 		private ServiceContainer _serviceContainer;
 
 		public Workspace ()
 		{
-			_documents = new List<Document>();
+			_documents = new Dictionary<object, Document>();
 			_activeDocument = null;
 			_references = new References ();
 			_serviceContainer = new ServiceContainer ();
@@ -58,6 +58,16 @@ namespace mwf_designer
 		{
 			LoadDefaultReferences (_references);
 			LoadDefaultServices (_serviceContainer);
+		}
+
+		public void Dispose ()
+		{
+			_activeDocument = null;
+			_documents = null;
+			_references.Dispose ();
+			_references = null;
+			_serviceContainer.Dispose ();
+			_serviceContainer = null;
 		}
 
 		private void LoadDefaultServices (IServiceContainer container)
@@ -76,14 +86,45 @@ namespace mwf_designer
 			get { return _references; }
 		}
 
-		public void AddDocument (Document doc)
+		public Document LoadDocument (string file)
 		{
-			_documents.Add (doc);
+			return LoadDocument (file, file);
 		}
 
-		public void RemoveDocument (Document doc)
+		public Document LoadDocument (string file, object identifierKey)
 		{
-			_documents.Remove (doc);
+			Document doc = new Document (file, this);
+			_documents[identifierKey] = doc;
+			doc.Load ();
+			return doc;
+		}
+
+		public Document GetDocument (object identifierKey)
+		{
+			return _documents[identifierKey];
+		}
+
+		public void CloseDocument (Document doc)
+		{
+			object key = null;
+			foreach (KeyValuePair<object, Document> kvp in _documents)
+				if (doc == kvp.Value)
+					key = kvp.Key;
+			if (key != null)
+				CloseDocument (key);
+		}
+
+		public void CloseDocument (object identifierKey)
+		{
+			Document doc = _documents[identifierKey];
+			if (doc != null) {
+				if (doc.IsModified && doc.LoadSuccessful)
+					doc.Save ();
+				_documents[identifierKey] = null;
+				doc.Dispose ();
+			}
+
+			// TODO: Handle active document change here if closed doc is active
 		}
 
 		public ServiceContainer Services {
@@ -98,7 +139,6 @@ namespace mwf_designer
 				OnActiveDocumentChanged (value, old);
 			}
 		}
-
 
 		private static readonly Type[] containers = new Type[] {
 			typeof (System.Windows.Forms.FlowLayoutPanel),
@@ -235,9 +275,6 @@ namespace mwf_designer
 
 		public ActiveDocumentChangedEventArgs (Document newDocument, Document oldDocument)
 		{
-			if (newDocument == null)
-				throw new ArgumentNullException ("newDocument");
-
 			_newDocument = newDocument;
 			_oldDocument = oldDocument;
 		}
