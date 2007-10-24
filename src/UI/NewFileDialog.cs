@@ -50,6 +50,8 @@ namespace mwf_designer
 		public NewFileDialog(string[] templateNames) : this ()
 		{
 			templatesListbox.Items.AddRange (templateNames);
+			if (templatesListbox.Items.Count >= 1)
+				templatesListbox.SelectedIndex = 0;
 		}
 
 		public string Class {
@@ -79,6 +81,7 @@ namespace mwf_designer
 		{
 			SaveFileDialog dialog = new SaveFileDialog();
             dialog.OverwritePrompt = true;
+			dialog.Filter = "C# Source Code (*.cs)|*.cs| VB.NET Source Code (*.vb)|*.vb|Other|*.*";
 			if (dialog.ShowDialog() == DialogResult.OK)
 				filenameTextbox.Text = dialog.FileName;
 		}

@@ -12,16 +12,26 @@ namespace mwf_designer
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+			AppDomain.CurrentDomain.UnhandledException += delegate (object sender, UnhandledExceptionEventArgs args) {
+				if (args.ExceptionObject is Exception)
+					OnException ((Exception)args.ExceptionObject);
+			};
+
 			try {
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
 				Application.Run(new MainView());
 			} catch (Exception e) {
-				MessageBox.Show ("A fatal error occured. Please file a bug report with the following details (Ctrl-C to copy to clipboard):" + 
-								 System.Environment.NewLine + System.Environment.NewLine +
-								 e.ToString (), "Fatal Error");
+				OnException (e);
 				System.Windows.Forms.Application.Exit ();
 			}
         }
+
+		private static void OnException (Exception e)
+		{
+			MessageBox.Show ("A fatal error occured. Please file a bug report with the following details (Ctrl-C to copy to clipboard):" + 
+							 System.Environment.NewLine + System.Environment.NewLine +
+							 e.ToString (), "Fatal Error");
+		}
     }
 }
