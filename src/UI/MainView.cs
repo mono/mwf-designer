@@ -41,13 +41,16 @@ using System.Reflection;
 #if WITH_MONO_DESIGN
 using Mono.Design;
 using DocumentDesigner = Mono.Design.DocumentDesigner;
+using UndoEngine = Mono.Design.UndoEngine;
+using MenuCommandService = Mono.Design.MenuCommandService;
 #endif
 
 namespace mwf_designer
 {
 	public partial class MainView : Form
 	{
-		Workspace _workspace;
+		private Workspace _workspace;
+		private ToolboxFiller _toolboxFiller;
 		private readonly string MODIFIED_MARKER = " *";
 
 		public MainView ()
@@ -92,10 +95,8 @@ namespace mwf_designer
 				UpdateWorkspaceActiveDocument ();
 			};
 			_workspace.ActiveDocumentChanged += OnActiveDocumentChanged;
-			_workspace.References.ReferencesChanged += delegate {
-				PopulateToolbox (toolbox, _workspace.References);
-			};
 			_workspace.Services.AddService (typeof (IToolboxService), (IToolboxService) toolbox);
+			_toolboxFiller = new ToolboxFiller (_workspace.References, toolbox);
 			AddErrorsTab ();
 			_workspace.Load ();
 		}
@@ -119,38 +120,28 @@ namespace mwf_designer
 			_workspace.Services.AddService (typeof (IUIService), (IUIService) errors);
 		}
 
-		// Currently populates with all MWF Controls that have a public ctor with no params
-		//
-		private void PopulateToolbox (ToolBoxList toolbox, References references)
-		{
-			toolbox.SuspendLayout ();
-			toolbox.Clear ();
-			foreach (ToolboxItem item in _workspace.GetToolboxItems ()) {
-				string category = (string) item.Properties["Category"];
-				if (category != null)
-					toolbox.AddToolboxItem (item, category);
-				else
-					toolbox.AddToolboxItem (item);
-			}
-			toolbox.ResumeLayout ();
-		}
-
 		private void LoadDocument (string file, Workspace workspace)
 		{
 			TabPage tab = new TabPage (Path.GetFileNameWithoutExtension (file));
 			tab.Name = file; // the key
 
 			// loads and associates the tab page with the document
-			Document doc = workspace.LoadDocument (file, tab); 
+			Document doc = workspace.CreateDocument (file, tab);
+			doc.Services.AddService (typeof (IMenuCommandService), new MenuCommandService (doc.Services));
+			doc.Load ();
 			if (doc.LoadSuccessful) {
 				doc.Modified += OnDocumentModified;
 				workspace.ActiveDocument = doc;
+				((Control)doc.DesignSurface.View).Dock = DockStyle.Fill;
 				tab.Controls.Add ((Control)doc.DesignSurface.View);
+				surfaceTabs.SuspendLayout ();
 				surfaceTabs.TabPages.Add (tab);
+				surfaceTabs.ResumeLayout ();
 				surfaceTabs.SelectedTab = surfaceTabs.TabPages[file];
 			} else {
-				workspace.CloseDocument (doc);
+				MessageBox.Show ("Unable to load!");
 				tab.Dispose ();
+				workspace.CloseDocument (doc);
 			}
 		}
 
@@ -169,8 +160,8 @@ namespace mwf_designer
 		private void CloseDocument (Document doc)
 		{
 			doc.Modified -= OnDocumentModified;
-			_workspace.CloseDocument (doc);
 			surfaceTabs.TabPages.Remove (surfaceTabs.SelectedTab);
+			_workspace.CloseDocument (doc);
 		}
 
 		private void newToolStripMenuItem_Click (object sender, EventArgs e)

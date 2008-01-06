@@ -2,7 +2,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -75,13 +75,13 @@ namespace mwf_designer
 
 		protected override void OnEndLoad (bool successful, ICollection errors)
 		{
+			if (!successful)
+				ReportErrors (errors);
 			base.OnEndLoad (successful, errors);
-			ReportErrors (errors);
 		}
 
 		protected override void ReportFlushErrors (ICollection errors)
 		{
-			base.ReportFlushErrors (errors);
 			ReportErrors (errors);
 		}
 
@@ -89,12 +89,13 @@ namespace mwf_designer
 		{
 			IUIService service = base.GetService (typeof (IUIService)) as IUIService;
 			if (service != null) {
-				service.SetUIDirty (); // clears the error list
 				foreach (object error in errors) {
 					if (error is Exception)
 						service.ShowError ((Exception) error);
 					else if (error is string)
 						service.ShowError ((string) error);
+					else
+						service.ShowError (error.ToString ());
 				}
 			}
 		}

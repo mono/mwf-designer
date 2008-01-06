@@ -2,7 +2,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -34,6 +34,7 @@ using System.IO;
 #if WITH_MONO_DESIGN
 using Mono.Design;
 using DesignSurface = Mono.Design.DesignSurface;
+using UndoEngine = Mono.Design.UndoEngine;
 #endif
 
 namespace mwf_designer
@@ -58,6 +59,18 @@ namespace mwf_designer
 			_fileName = fileName;
 			_workspace = workspace;
 			_loaded = false;
+			_surface = new DesignSurface (_workspace.Services);
+		}
+
+		// Note that this ServiceContainer is not the workspace one.
+		// The workspace one is the parent of the surface one. So when services
+		// are added to this container they won't be added to the parent one 
+		// (unless promoted). 
+		// 
+		// Basically added services will be available only to the document
+		//
+		public IServiceContainer Services {
+			get { return _surface.GetService (typeof (IServiceContainer)) as IServiceContainer; }
 		}
 
 		public bool Load ()
@@ -69,15 +82,16 @@ namespace mwf_designer
 
 			// Initialize code provider, loader and surface
 			//
-			_codeProvider = new CodeProvider (this.FileName);
+
+			ITypeResolutionService resolutionSvc = _surface.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService;
+			_codeProvider = new CodeProvider (this.FileName, resolutionSvc);
 			_loader = new CodeProviderDesignerLoader (_codeProvider);
-			_surface = new DesignSurface (_workspace.Services);
 
 			// Initialize and add the services
 			//
-			IServiceContainer container = (IServiceContainer)_surface.GetService (typeof (IServiceContainer));
-			container.AddService (typeof (IEventBindingService), new CodeProviderEventBindingService (_codeProvider, 
-																									 (IServiceProvider) container));
+			IServiceContainer container = (IServiceContainer) _surface.GetService (typeof (IServiceContainer));
+			container.AddService (typeof (IEventBindingService),
+					      new CodeProviderEventBindingService (_codeProvider, (IServiceProvider) container));
 			_surface.BeginLoad (_loader);
 			if (_surface.IsLoaded) {
 				_loaded = true;
@@ -91,9 +105,6 @@ namespace mwf_designer
 				};
 				if (Loaded != null)
 					Loaded (this, EventArgs.Empty);
-			} else {
-				_surface.Dispose ();
-				_loader.Dispose ();
 			}
 
 			return _loaded;

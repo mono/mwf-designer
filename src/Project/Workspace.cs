@@ -2,7 +2,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -40,7 +40,6 @@ namespace mwf_designer
 {
 	internal class Workspace
 	{
-
 		private Dictionary<object, Document> _documents;
 		private Document _activeDocument;
 		private References _references;
@@ -57,7 +56,7 @@ namespace mwf_designer
 		public void Load ()
 		{
 			LoadDefaultReferences (_references);
-			LoadDefaultServices (_serviceContainer);
+			InitializeWorkspaceServiceContainer (_serviceContainer);
 		}
 
 		public void Dispose ()
@@ -70,7 +69,7 @@ namespace mwf_designer
 			_serviceContainer = null;
 		}
 
-		private void LoadDefaultServices (IServiceContainer container)
+		private void InitializeWorkspaceServiceContainer (IServiceContainer container)
 		{
 			container.AddService (typeof (ITypeResolutionService), new TypeResolutionService (this.References));
 		}
@@ -86,16 +85,15 @@ namespace mwf_designer
 			get { return _references; }
 		}
 
-		public Document LoadDocument (string file)
+		public Document CreateDocument (string file)
 		{
-			return LoadDocument (file, file);
+			return CreateDocument (file, file);
 		}
 
-		public Document LoadDocument (string file, object identifierKey)
+		public Document CreateDocument (string file, object identifierKey)
 		{
 			Document doc = new Document (file, this);
 			_documents[identifierKey] = doc;
-			doc.Load ();
 			return doc;
 		}
 
@@ -123,8 +121,6 @@ namespace mwf_designer
 				_documents[identifierKey] = null;
 				doc.Dispose ();
 			}
-
-			// TODO: Handle active document change here if closed doc is active
 		}
 
 		public ServiceContainer Services {
@@ -138,124 +134,6 @@ namespace mwf_designer
 				_activeDocument = value;
 				OnActiveDocumentChanged (value, old);
 			}
-		}
-
-		private static readonly Type[] containers = new Type[] {
-			typeof (System.Windows.Forms.FlowLayoutPanel),
-			typeof (System.Windows.Forms.GroupBox),
-			typeof (System.Windows.Forms.Panel),
-			typeof (System.Windows.Forms.SplitContainer),
-			typeof (System.Windows.Forms.TabControl),
-			typeof (System.Windows.Forms.TableLayoutPanel),
-		};
-
-		private static readonly Type[] menusToolbars = new Type[] {
-			typeof (System.Windows.Forms.ContextMenuStrip),
-			typeof (System.Windows.Forms.MenuStrip),
-			typeof (System.Windows.Forms.StatusStrip),
-			typeof (System.Windows.Forms.ToolStrip),
-			typeof (System.Windows.Forms.ToolStripContainer),
-		};
-
-		private static readonly Type[] commonControls = new Type[] {
-			typeof (System.Windows.Forms.Button),
-			typeof (System.Windows.Forms.CheckBox),
-			typeof (System.Windows.Forms.CheckedListBox),
-			typeof (System.Windows.Forms.ComboBox),
-			typeof (System.Windows.Forms.DateTimePicker),
-			typeof (System.Windows.Forms.Label),
-			typeof (System.Windows.Forms.LinkLabel),
-			typeof (System.Windows.Forms.ListBox),
-			typeof (System.Windows.Forms.ListView),
-			typeof (System.Windows.Forms.MaskedTextBox),
-			typeof (System.Windows.Forms.MonthCalendar),
-			typeof (System.Windows.Forms.NotifyIcon),
-			typeof (System.Windows.Forms.NumericUpDown),
-			typeof (System.Windows.Forms.PictureBox),
-			typeof (System.Windows.Forms.ProgressBar),
-			typeof (System.Windows.Forms.RadioButton),
-			typeof (System.Windows.Forms.RichTextBox),
-			typeof (System.Windows.Forms.TextBox),
-			typeof (System.Windows.Forms.ToolTip),
-			typeof (System.Windows.Forms.TreeView),
-			typeof (System.Windows.Forms.WebBrowser),
-		};
-
-		private static readonly Type[] commonComponents = new Type[] {
-			typeof (System.ComponentModel.BackgroundWorker),
-			typeof (System.IO.FileSystemWatcher),
-			typeof (System.Diagnostics.Process),
-			typeof (System.Windows.Forms.ImageList),
-			typeof (System.Windows.Forms.HelpProvider),
-			typeof (System.IO.Ports.SerialPort),
-			typeof (System.Windows.Forms.Timer),
-		};
-
-
-		public List<ToolboxItem> GetToolboxItems ()
-		{
-			List<ToolboxItem> list = new List<ToolboxItem>();
-
-			foreach (Assembly assembly in _references.Assemblies) {
-				foreach (Type type in assembly.GetTypes()) {
-					if (IsValidToolType (type) && HasPublicEmptyCtor (type)) {
-						ToolboxItem tool = new ToolboxItem (type);
-						tool.Properties["Category"] = "All";
-						list.Add (tool);
-					}
-				}
-			}
-
-			foreach (Type type in commonComponents) {
-				ToolboxItem tool = new ToolboxItem (type);
-				tool.Properties["Category"] = "Common Components";
-				list.Add (tool);
-			}
-
-			foreach (Type type in menusToolbars) {
-				ToolboxItem tool = new ToolboxItem (type);
-				tool.Properties["Category"] = "Menus and Toolbars";
-				list.Add (tool);
-			}
-
-			foreach (Type type in commonControls) {
-				ToolboxItem tool = new ToolboxItem (type);
-				tool.Properties["Category"] = "Common Controls";
-				list.Add (tool);
-			}
-
-			foreach (Type type in containers) {
-				ToolboxItem tool = new ToolboxItem (type);
-				tool.Properties["Category"] = "Containers";
-				list.Add (tool);
-			}
-
-			return list;
-		}
-
-		private bool HasPublicEmptyCtor (Type type)
-		{
-			bool result = false;
-			ConstructorInfo[] ctors = type.GetConstructors ();
-			if (ctors.Length > 0) {
-				foreach (ConstructorInfo ctor in ctors)
-					if (ctor.GetParameters().Length == 0)
-						result = true;
-			}
-			return result;
-		}
-
-		private bool IsValidToolType (Type type)
-		{
-			ToolboxItemAttribute toolboxAttribute = TypeDescriptor.GetAttributes (type)[typeof (ToolboxItemAttribute)] as ToolboxItemAttribute;
-			if (toolboxAttribute.ToolboxItemTypeName != ToolboxItemAttribute.None.ToolboxItemTypeName &&
-				!type.IsAbstract && !type.IsInterface &&
-				((type.Attributes & TypeAttributes.Public) == TypeAttributes.Public) && 
-				((type.Attributes & TypeAttributes.NestedFamily) != TypeAttributes.NestedFamily) && 
-				((type.Attributes & TypeAttributes.NestedFamORAssem) != TypeAttributes.NestedFamORAssem) && 
-				typeof (System.Windows.Forms.Control).IsAssignableFrom (type))
-				return true;
-			return false;
 		}
 
 		protected virtual void OnActiveDocumentChanged (Document newDocument, Document oldDocument)

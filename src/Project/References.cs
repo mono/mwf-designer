@@ -3,7 +3,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -55,7 +55,7 @@ namespace mwf_designer
 				throw new ArgumentNullException ("assembly");
 
 			_assemblies.Add (assembly);
-			OnReferencesChanged ();
+			OnReferenceAdded (assembly);
 		}
 
 		public bool AddReference (string fileName)
@@ -79,8 +79,9 @@ namespace mwf_designer
 				}
 			}
 			if (toRemove != -1) {
+				Assembly assembly = _assemblies[toRemove];
 				_assemblies.RemoveAt (toRemove);
-				OnReferencesChanged ();
+				OnReferenceRemoved (assembly);
 			}
 		}
 
@@ -97,12 +98,55 @@ namespace mwf_designer
 			get{ return _assemblies; }
 		}
 
-		private void OnReferencesChanged ()
+		private void OnReferenceAdded (Assembly assembly)
 		{
-			if (ReferencesChanged != null)
-				ReferencesChanged (this, EventArgs.Empty);
+			if (ReferenceAdded != null)
+				ReferenceAdded (this, new ReferenceAddedEventArgs (assembly));
 		}
 
-		public event EventHandler ReferencesChanged;
+		private void OnReferenceRemoved (Assembly assembly)
+		{
+			if (ReferenceRemoved != null)
+				ReferenceRemoved (this, new ReferenceRemovedEventArgs (assembly));
+		}
+
+		public event ReferenceAddedEventHandler ReferenceAdded;
+		public event ReferenceRemovedEventHandler ReferenceRemoved;
+	}
+
+	internal delegate void ReferenceAddedEventHandler (object sender, ReferenceAddedEventArgs args);
+	internal delegate void ReferenceRemovedEventHandler (object sender, ReferenceRemovedEventArgs args);
+
+	internal class ReferenceAddedEventArgs : EventArgs
+	{
+		private Assembly _assembly;
+
+		public ReferenceAddedEventArgs (Assembly assembly)
+		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+			_assembly = assembly;
+		}
+
+		public Assembly Assembly {
+			get { return _assembly; }
+		}
+	}
+
+
+	internal class ReferenceRemovedEventArgs : EventArgs
+	{
+		private Assembly _assembly;
+
+		public ReferenceRemovedEventArgs (Assembly assembly)
+		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+			_assembly = assembly;
+		}
+
+		public Assembly Assembly {
+			get { return _assembly; }
+		}
 	}
 }

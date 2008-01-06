@@ -1,8 +1,10 @@
 //
 // Authors:	 
 //	  Jonathan Pobst (monkey@jpobst.com>)
+// 	  Ivan N. Zlatev (contact@i-nZ.net)
 //
 // (C) 2007 Jonathan Pobst
+// (C) 2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -56,6 +58,17 @@ namespace mwf_designer
 			group_panels.Clear ();
 			Controls.Clear ();
 		}
+
+		protected override void OnLayout (LayoutEventArgs args)
+		{
+			base.OnLayout (args);
+			int top = AutoScrollPosition.Y;
+			foreach (Control c in this.Controls) {
+				c.Top = top;
+				top += c.Height;
+				c.Width = this.Width;
+			}
+		}
 #endregion
 
 #region Protected Methods
@@ -65,11 +78,11 @@ namespace mwf_designer
 			
 			if (e.Control is ToolBoxGroupPanel) {
 				ToolBoxGroupPanel gp = (ToolBoxGroupPanel)e.Control;
-				gp.Dock = DockStyle.Top;
 				gp.Visible = true;
 				
 				group_panels.Add (gp.Text, gp);
 			}
+			base.PerformLayout ();
 		}
 
 		protected override void OnControlRemoved (ControlEventArgs e)
@@ -81,6 +94,7 @@ namespace mwf_designer
 
 				group_panels.Remove (gp.Text);
 			}
+			base.PerformLayout ();
 		}
 
 		protected virtual void OnToolPicked (EventArgs e)
@@ -258,14 +272,29 @@ namespace mwf_designer
 		{
 		}
 
-		public void RemoveToolboxItem (System.Drawing.Design.ToolboxItem toolboxItem, string category)
+		public void RemoveToolboxItem (System.Drawing.Design.ToolboxItem item, string category)
 		{
-			this.RemoveToolboxItem (toolboxItem);
+			ToolBoxGroupPanel group = null;
+			if (category != null && group_panels.TryGetValue (category, out group)) {
+				int toRemove = -1;
+				for (int i=0; i < group.Items.Count; i++) {
+					ToolBoxListItem listItem = (ToolBoxListItem) group.Items[i];
+					if (listItem.ToolBoxItem == item) {
+						listItem.Click -= new EventHandler (item_Click);
+						toRemove = i;
+						break;
+					}
+				}
+				if (toRemove != -1)
+					group.Items.RemoveAt (toRemove);
+				if (group.Items.Count == 0)
+					Controls.Remove (group);
+			}
 		}
 
-		public void RemoveToolboxItem (System.Drawing.Design.ToolboxItem toolboxItem)
+		public void RemoveToolboxItem (System.Drawing.Design.ToolboxItem item)
 		{
-			//_toolbox.Items.Remove (toolboxItem);
+			this.RemoveToolboxItem (item, "All");
 		}
 
 		public void SelectedToolboxItemUsed ()

@@ -2,7 +2,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,6 +30,7 @@ using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Reflection;
@@ -46,13 +47,34 @@ namespace mwf_designer
 {
 	internal class CodeProvider
 	{
+		private class EnvironmentInformationProvider : ICSharpCode.NRefactory.IEnvironmentInformationProvider
+		{
+			private ITypeResolutionService _resolution;
+
+			public EnvironmentInformationProvider (ITypeResolutionService resolution)
+			{
+				_resolution = resolution;
+			}
+
+			public bool HasField (string fullTypeName, string fieldName)
+			{
+				if (_resolution != null) {
+					Type type = _resolution.GetType (fullTypeName);
+					if (type != null)
+						return type.GetField (fieldName) != null;
+				}
+				return false;
+			}
+		}
+
 		private string _codeBehindFileName;
 		private string _fileName;
 		private CodeDomProvider _provider;
+                private EnvironmentInformationProvider _informationProvider;
 
 		// TODO: parse both and try to find the basetype of the partial codebehind
 		//
-		public CodeProvider (string fileName)
+		public CodeProvider (string fileName, ITypeResolutionService resolutionSvc)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
@@ -63,14 +85,15 @@ namespace mwf_designer
 
 			_fileName = fileName;
 			_provider = GetCodeProvider (fileName);
+			_informationProvider = new EnvironmentInformationProvider (resolutionSvc);
 		}
 
 
 		internal static string GetCodeBehindFileName (string file)
 		{
 			return Path.Combine (Path.GetDirectoryName (file), 
-												  Path.GetFileNameWithoutExtension (file) + ".Designer" + 
-												  Path.GetExtension (file));
+					     Path.GetFileNameWithoutExtension (file) + ".Designer" + 
+					     Path.GetExtension (file));
 		}
 
 		public static bool IsValid (string file)
@@ -105,6 +128,13 @@ namespace mwf_designer
 
 			// get the first valid typedeclaration name
 			CodeDomVisitor visitor = new CodeDomVisitor ();
+
+			// NRefactory can't decide on its own whether to generate CodePropertyReference or 
+			// CodeFieldReference. This will be done by the supplied by us IEnvironmentInformationProvider.
+			// Our EnvironmentInformationProvider makes use of the ITypeResolutionService to get the type
+			// (from the name) and check if a field is available.
+			// 
+			visitor.EnvironmentInformationProvider = _informationProvider;
 			visitor.VisitCompilationUnit (codeBehindParser.CompilationUnit, null);
 			mergedUnit = visitor.codeCompileUnit;
 

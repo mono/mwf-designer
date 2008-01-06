@@ -116,9 +116,6 @@ namespace mwf_designer
 			if (result == null)
 				result = Assembly.GetExecutingAssembly ().GetType (name, false, ignoreCase);
 
-			if (result == null)
-				throw new InvalidOperationException ("Cannot find the Type of: " + name);
-
 			return result;
 		}
 

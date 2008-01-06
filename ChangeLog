@@ -1,3 +1,21 @@
+2008-01-07  Ivan N. Zlatev <contact@i-nz.net>
+
+	* UI/ToolBoxList/ToolBoxList.cs: 
+	 - Drop Docking of the categories for using custom layouting in order
+	 to show the categories in the order they were added.
+	 - Implement RemoveToolboxItem.
+	 - Drop NotImplementedExceptions in order to make it work on MSNET.
+	* DesignTime/ToolboxFiller.cs, Project/Workspace.cs, UI/MainView.cs:
+	 Move the Toolbox filling code out of the Workspace and create a 
+	 Mediator(?) between References and Toolbox.
+	* Project/References.cs: Provide add/remove notication.
+	* DesignTime/CodeProvider.cs, DesignTime/CodeProviderDesignerLoader.cs:
+	 NRefactory doesn't recognize between field and property reference, so
+	 we need to tell it in oder to get proper CodeExpressions generated.
+	* UndoRedoEngine.cs: Implemented.
+	* deps/ICSharpCode.NRefactory.dll: Update to 2.2.1.
+	* Makefile: fixes for building without Mono.Design.
+
 2007-10-24  Ivan N. Zlatev <contact@i-nz.net>
 
 	* Program.cs: More exception handling.
