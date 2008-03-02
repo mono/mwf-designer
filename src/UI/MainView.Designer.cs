@@ -44,7 +44,7 @@ namespace mwf_designer
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-			this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.referencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.alignToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,7 +141,7 @@ namespace mwf_designer
             this.pasteToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.toolStripMenuItem3,
-            this.preferencesToolStripMenuItem});
+            this.referencesToolStripMenuItem});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.editToolStripMenuItem.Text = "Edit";
@@ -151,12 +151,14 @@ namespace mwf_designer
 			this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
 			this.undoToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.undoToolStripMenuItem.Text = "Undo";
+			this.undoToolStripMenuItem.Click += new System.EventHandler (this.OnUndo_Clicked);
 			// 
 			// redoToolStripMenuItem
 			// 
 			this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
 			this.redoToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.redoToolStripMenuItem.Text = "Redo";
+			this.redoToolStripMenuItem.Click += new System.EventHandler (this.OnRedo_Clicked);
 			// 
 			// toolStripMenuItem2
 			// 
@@ -168,36 +170,40 @@ namespace mwf_designer
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			this.cutToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.cutToolStripMenuItem.Text = "Cut";
+			this.cutToolStripMenuItem.Click += new System.EventHandler (this.OnCut_Clicked);
 			// 
 			// copyToolStripMenuItem
 			// 
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			this.copyToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.copyToolStripMenuItem.Text = "Copy";
+			this.copyToolStripMenuItem.Click += new System.EventHandler (this.OnCopy_Clicked);
 			// 
 			// pasteToolStripMenuItem
 			// 
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.pasteToolStripMenuItem.Text = "Paste";
+			this.pasteToolStripMenuItem.Click += new System.EventHandler (this.OnPaste_Clicked);
 			// 
 			// deleteToolStripMenuItem
 			// 
 			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
 			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
 			this.deleteToolStripMenuItem.Text = "Delete";
+			this.deleteToolStripMenuItem.Click += new System.EventHandler (this.OnDelete_Clicked);
 			// 
 			// toolStripMenuItem3
 			// 
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
 			this.toolStripMenuItem3.Size = new System.Drawing.Size(193, 6);
 			// 
-			// preferencesToolStripMenuItem
+			// referencesToolStripMenuItem
 			// 
-			this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-			this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-			this.preferencesToolStripMenuItem.Text = "Referenced Assemblies";
-			this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.referencesToolStripMenuItem_Click);
+			this.referencesToolStripMenuItem.Name = "referencesToolStripMenuItem";
+			this.referencesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+			this.referencesToolStripMenuItem.Text = "Referenced Assemblies";
+			this.referencesToolStripMenuItem.Click += new System.EventHandler(this.OnReferences_Clicked);
 			// 
 			// formatToolStripMenuItem
 			// 
@@ -291,7 +297,6 @@ namespace mwf_designer
 			// 
 			// propertyGrid
 			// 
-			this.propertyGrid.ActiveComponents = new object[0];
 			this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.propertyGrid.Location = new System.Drawing.Point(0, 0);
 			this.propertyGrid.Name = "propertyGrid";
@@ -338,7 +343,7 @@ namespace mwf_designer
 		private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
-		private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem referencesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem alignToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;

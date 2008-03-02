@@ -77,7 +77,7 @@ namespace mwf_designer
 		private void saveButton_Click (object sender, EventArgs e)
 		{
 			SaveFileDialog dialog = new SaveFileDialog();
-            dialog.OverwritePrompt = true;
+			dialog.OverwritePrompt = true;
 			if (dialog.ShowDialog() == DialogResult.OK) 
 				WriteErrorsToFile (dialog.FileName);
 		}

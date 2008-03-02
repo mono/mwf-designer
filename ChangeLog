@@ -1,3 +1,14 @@
+2008-03-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Enable Undo, Redo, Cut, Copy, Paste, Delete as I've already implmented
+	those in System.Design.
+	* Much better code for the PropertyGrid
+	* Makefile: Fixes and improvements.
+	* Program.cs: Fix spacing.
+	* DesignTime/CodeProviderDesignerLoader.cs: Report errors only if 
+	we weren't successful.
+	* DesignTime/UndoRedoEngine.cs: Fix multi undo/redo operations.
+
 2008-01-07  Ivan N. Zlatev <contact@i-nz.net>
 
 	* UI/ToolBoxList/ToolBoxList.cs: 

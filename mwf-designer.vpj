@@ -38,7 +38,6 @@
 			</Target>
 		</Menu>
 		<Includes>
-			<Include Dir="&lt;double click here to add another entry&gt;"/>
 		</Includes>
 		<Dependencies Name="Release">
 			<Dependency Project="../Mono.Design/Mono.Design.vpj"/>
@@ -55,7 +54,9 @@
 				<F N="src/DesignTime/CodeProvider.cs"/>
 				<F N="src/DesignTime/CodeProviderDesignerLoader.cs"/>
 				<F N="src/DesignTime/CodeProviderEventBindingService.cs"/>
+				<F N="src/DesignTime/ToolboxFiller.cs"/>
 				<F N="src/DesignTime/TypeResolutionService.cs"/>
+				<F N="src/DesignTime/UndoRedoEngine.cs"/>
 			</Folder>
 			<Folder Name="Project">
 				<F N="src/Project/Document.cs"/>
@@ -70,6 +71,9 @@
 					<F N="src/UI/ToolBoxList/ToolBoxList.cs"/>
 					<F N="src/UI/ToolBoxList/ToolBoxListItem.cs"/>
 				</Folder>
+				<F N="src/UI/ErrorList.cs"/>
+				<F N="src/UI/ErrorList.Designer.cs"/>
+				<F N="src/UI/ErrorListTabPage.cs"/>
 				<F N="src/UI/MainView.cs"/>
 				<F N="src/UI/MainView.Designer.cs"/>
 				<F N="src/UI/NewFileDialog.cs"/>
@@ -78,8 +82,6 @@
 				<F N="src/UI/PropertyGrid.Designer.cs"/>
 				<F N="src/UI/ReferencesDialog.cs"/>
 				<F N="src/UI/ReferencesDialog.Designer.cs"/>
-				<F N="src/UI/Toolbox.cs"/>
-				<F N="src/UI/Toolbox.Designer.cs"/>
 			</Folder>
 			<F N="src/AssemblyInfo.cs"/>
 			<F N="src/Program.cs"/>

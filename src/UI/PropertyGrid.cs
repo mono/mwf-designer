@@ -2,7 +2,7 @@
 // Authors:	 
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2007 Ivan N. Zlatev
+// (C) 2007-2008 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -38,107 +38,142 @@ using System.Reflection;
 
 namespace mwf_designer
 {
-    internal partial class PropertyGrid : UserControl
-    {
+	internal partial class PropertyGrid : UserControl
+	{
+		private IServiceProvider _serviceProvider;
+		private bool _updating;
 
-        public PropertyGrid()
-        {
-            InitializeComponent();
-        }
-
-		private void OnPrimarySelectionChanged (object sender, EventArgs args)
+		public PropertyGrid()
 		{
-			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
-			if (selectionService != null) {
-				ICollection componentsCollection = selectionService.GetSelectedComponents ();
-				object[] components = new object[componentsCollection.Count];
-				componentsCollection.CopyTo (components, 0);
-				SetActiveComponents (components);
-			}
+			InitializeComponent();
 		}
 
 		private void OnComponentsCombo_SelectedIndexChanged (object sender, EventArgs args)
 		{
-			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
-			if (selectionService != null && _componentsCombo.SelectedIndex != -1) {
-				string selectedComponentName = (string) _componentsCombo.Items[_componentsCombo.SelectedIndex];
-				IComponent selectedComponent = PrimarySelection.Site.Container.Components[selectedComponentName];
-				selectionService.SetSelectedComponents (new IComponent[] { selectedComponent });
-			}
+			if (_componentsCombo.SelectedIndex != -1 && !_updating)
+				SetPrimarySelection ((string) _componentsCombo.Items[_componentsCombo.SelectedIndex]);
 		}
 
-		public object[] ActiveComponents {
-			get { return _propertyGrid.SelectedObjects; }
-			set { SetActiveComponents (value); }
-		}
-
-		private IComponent PrimarySelection {
-			get {
-				if (this.ActiveComponents != null && ActiveComponents.Length > 0) {
-					IComponent component = ActiveComponents[0] as IComponent;
-					if (component != null && component.Site != null) {
-						ISelectionService selectionService = component.Site.GetService (typeof (ISelectionService)) as ISelectionService;
-						if (selectionService != null)
-							return selectionService.PrimarySelection as IComponent;
-					}
-				}
-				return null;
-			}
-		}
-
-		private void SetActiveComponents (object[] components)
+		private void SetPrimarySelection (string componentName)
 		{
-			if (components.Length == 1) {
-				IComponent component = (IComponent) components[0];
-				if (_propertyGrid.SelectedObject != null) // detach events from the prev active component
-					DisableNotification ((IComponent)_propertyGrid.SelectedObject);
+			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
+			IContainer container = this.GetService (typeof (IContainer)) as IContainer;
+			if (selectionService == null || container == null)
+				return;
 
-				PopulateComponents (component.Site.Container.Components);
-				_componentsCombo.SelectedIndex = _componentsCombo.Items.IndexOf (component.Site.Name);
-				_propertyGrid.SelectedObject = component; 
-				EnableNotification (component);
-			} else if (components.Length == 0) {
-				_propertyGrid.SelectedObjects = components;
+			IComponent selectedComponent = container.Components[componentName];
+			selectionService.SetSelectedComponents (new IComponent[] { selectedComponent });
+		}
+
+		public void Update (IServiceProvider serviceProvider)
+		{
+			if (serviceProvider == null) {
+				_propertyGrid.SelectedObject = null;
 				_componentsCombo.Items.Clear ();
 			} else {
-				_propertyGrid.SelectedObjects = components;
-				_componentsCombo.SelectedIndex = -1;
+				DisableComponentsChangeNotification (_serviceProvider);
+				UpdatePropertyGrid (serviceProvider);
+				PopulateComponentsList (serviceProvider);
+				EnableComponentsChangeNotification (serviceProvider);
+				// ShowEventsTab (); // MWF's PropertyGrid doesn't support EventsTab
 			}
-//          ShowEventsTab (); // MWF's PropertyGrid doesn't support EventsTab
+			_serviceProvider = serviceProvider;
+		}
+
+		private void UpdatePropertyGrid (IServiceProvider serviceProvider)
+		{
+			_propertyGrid.SelectedObject = null;
+			if (serviceProvider == null)
+				return;
+			ISelectionService selectionService = serviceProvider.GetService (typeof (ISelectionService)) as ISelectionService;
+			if (selectionService == null)
+				return;
+
+			ICollection selectionCollection = selectionService.GetSelectedComponents ();
+			if (selectionCollection != null) {
+				object[] selection = new object[selectionCollection.Count];
+				selectionCollection.CopyTo (selection, 0);
+				_propertyGrid.SelectedObjects = selection;
+			}
+		}
+
+		private void PopulateComponentsList (IServiceProvider serviceProvider)
+		{
+			_componentsCombo.Items.Clear ();
+
+			if (serviceProvider == null)
+				return;
+			ISelectionService selectionService = serviceProvider.GetService (typeof (ISelectionService)) as ISelectionService;
+			IContainer container = serviceProvider.GetService (typeof (IContainer)) as IContainer;
+			if (selectionService == null || container == null || container.Components == null)
+				return;
+
+			int primaryIndex = -1;
+			for (int i=0; i < container.Components.Count; i++) {
+				_componentsCombo.Items.Add (container.Components[i].Site.Name);
+				if (selectionService != null && container.Components[i] == selectionService.PrimarySelection)
+					primaryIndex = i;
+			}
+			if (primaryIndex != -1) {
+				_updating = true; // in order to ignore the raised selectedindexchanged
+				_componentsCombo.SelectedIndex = primaryIndex;
+				_updating = false;
+			}
 		}
 
 		// MWF's PropertyGrid doesn't support EventsTab
 		//
-		private void ShowEventsTab ()
+		// private void ShowEventsTab ()
+		// {
+		// 	_propertyGrid.PropertyTabs.AddTabType (typeof (System.Windows.Forms.Design.EventsTab));
+		// 	_propertyGrid.Site = PrimarySelection.Site;
+		// 	_propertyGrid.GetType ().InvokeMember ("ShowEventsButton", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+		// 					   null, _propertyGrid, new object [] { true });
+		// }
+
+		private void OnPrimarySelectionChanged (object sender, EventArgs args)
 		{
-			_propertyGrid.PropertyTabs.AddTabType (typeof (System.Windows.Forms.Design.EventsTab));
-			_propertyGrid.Site = PrimarySelection.Site;
-			_propertyGrid.GetType ().InvokeMember ("ShowEventsButton", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-							   null, _propertyGrid, new object [] { true });
+			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
+			IContainer container = this.GetService (typeof (IContainer)) as IContainer;
+			if (container == null || selectionService == null)
+				return;
+
+			IComponent primarySelection = selectionService.PrimarySelection as IComponent;
+			if (primarySelection != null && primarySelection.Site != null && 
+			    primarySelection.Site.Name != null) {
+				_updating = true;
+				_componentsCombo.SelectedItem = primarySelection.Site.Name;
+				UpdatePropertyGrid (_serviceProvider);
+				_updating = false;
+			}
 		}
 
-		private void EnableNotification (IComponent component)
+		private void EnableComponentsChangeNotification (IServiceProvider provider)
 		{
-			IComponentChangeService changeService = this.GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (provider == null)
+				return;
+			IComponentChangeService changeService = provider.GetService (typeof (IComponentChangeService)) as IComponentChangeService;
 			if (changeService != null) {
 				changeService.ComponentAdded += new ComponentEventHandler (OnComponentAdded);
 				changeService.ComponentRemoving += new ComponentEventHandler (OnComponentRemoving);
 				changeService.ComponentRename += new ComponentRenameEventHandler (OnComponentRename);
 			}
-			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
+			ISelectionService selectionService = provider.GetService (typeof (ISelectionService)) as ISelectionService;
 			if (selectionService != null)
 				selectionService.SelectionChanged += new EventHandler (OnPrimarySelectionChanged);
 		}
 
-		private void DisableNotification (IComponent component)
+		private void DisableComponentsChangeNotification (IServiceProvider provider)
 		{
-			IComponentChangeService changeService = this.GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (provider == null)
+				return;
+			IComponentChangeService changeService = provider.GetService (typeof (IComponentChangeService)) as IComponentChangeService;
 			if (changeService != null) {
 				changeService.ComponentAdded -= new ComponentEventHandler (OnComponentAdded);
 				changeService.ComponentRemoving -= new ComponentEventHandler (OnComponentRemoving);
 				changeService.ComponentRename -= new ComponentRenameEventHandler (OnComponentRename);
 			}
-			ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
+			ISelectionService selectionService = provider.GetService (typeof (ISelectionService)) as ISelectionService;
 			if (selectionService != null)
 				selectionService.SelectionChanged -= new EventHandler (OnPrimarySelectionChanged);
 		}
@@ -146,43 +181,41 @@ namespace mwf_designer
 
 		private void OnComponentAdded (object sender, ComponentEventArgs args)
 		{
-			_componentsCombo.Items.Add (args.Component.Site.Name);
+			if (args.Component != null && args.Component.Site != null && 
+			    args.Component.Site.Name != null) {
+				_updating = true;
+				_componentsCombo.Items.Add (args.Component.Site.Name);
+				_updating = false;
+			}
 		}
 
 		private void OnComponentRemoving (object sender, ComponentEventArgs args)
 		{
-			int index = -1;
-			for (int i=0; i < _componentsCombo.Items.Count; i++) {
-				if (_componentsCombo.Items[i] == args.Component) {
-					index = i;
-					break;
-				}
+			if (args.Component != null && args.Component.Site != null && 
+			    args.Component.Site.Name != null) {
+				_updating = true;
+				_componentsCombo.Items.Remove (args.Component.Site.Name);
+				_updating = false;
 			}
-			if (index != -1)
-				_componentsCombo.Items.RemoveAt (index);
-			// MWF bug: _componentsCombo.Items.Remove (args.Component.Site.Name);
 		}
 
 		private void OnComponentRename (object sender, ComponentRenameEventArgs args)
 		{
-			_componentsCombo.Items.Remove (args.OldName);
-			_componentsCombo.SelectedIndex = _componentsCombo.Items.Add (args.NewName);
-		}
-
-		private void PopulateComponents (ComponentCollection components)
-		{
-			_componentsCombo.Items.Clear ();
-			foreach (IComponent c in components) {
-				_componentsCombo.Items.Add (c.Site.Name);
+			if (args.OldName == null || args.NewName == null)
+				return;
+			int toRename = _componentsCombo.Items.IndexOf (args.OldName);
+			if (toRename != -1) {
+				_updating = true;
+				_componentsCombo.Items[toRename] = args.NewName;
+				_updating = false;
 			}
 		}
 
 		protected override object GetService (Type type)
 		{
-			if (this.PrimarySelection != null && this.PrimarySelection.Site != null)
-				return this.PrimarySelection.Site.GetService (type);
-			else
-				return base.GetService (type);
+			if (_serviceProvider != null)
+				return _serviceProvider.GetService (type);
+			return null;
 		}
     }
 }

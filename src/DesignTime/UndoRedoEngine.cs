@@ -52,10 +52,12 @@ namespace mwf_designer
 		protected override void AddUndoUnit (UndoEngine.UndoUnit unit) 
 		{
 			_undoUnits.Push (unit);
+			_redoUnits.Clear ();
 		}
 
 		protected override void DiscardUndoUnit (UndoEngine.UndoUnit unit) 
 		{
+			base.DiscardUndoUnit (unit);
 			if (_undoUnits.Count > 0 && Object.ReferenceEquals (unit, _undoUnits.Peek ()))
 				_undoUnits.Pop ();
 		}
@@ -68,10 +70,10 @@ namespace mwf_designer
 		public void Undo (int actionsCount)
 		{
 			if (actionsCount <= 0 || actionsCount > _undoUnits.Count)
-				throw new ArgumentOutOfRangeException ("actionsCount");
-
+				return;
 			for (; actionsCount != 0; actionsCount--) {
 				UndoUnit unit = _undoUnits.Pop ();
+				// Console.WriteLine ("undo: " + unit.Name);
 				unit.Undo ();
 				_redoUnits.Push (unit);
 			}
@@ -85,10 +87,11 @@ namespace mwf_designer
 		public void Redo (int actionsCount)
 		{
 			if (actionsCount <= 0 || actionsCount > _redoUnits.Count)
-				throw new ArgumentOutOfRangeException ("actionsCount");
+				return;
 
 			for (; actionsCount != 0; actionsCount--) {
 				UndoUnit unit = _redoUnits.Pop ();
+				// Console.WriteLine ("redo: " + unit.Name);
 				unit.Undo ();
 				_undoUnits.Push (unit);
 			}

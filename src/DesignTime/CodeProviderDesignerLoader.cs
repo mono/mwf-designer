@@ -75,8 +75,7 @@ namespace mwf_designer
 
 		protected override void OnEndLoad (bool successful, ICollection errors)
 		{
-			if (!successful)
-				ReportErrors (errors);
+			ReportErrors (errors);
 			base.OnEndLoad (successful, errors);
 		}
 

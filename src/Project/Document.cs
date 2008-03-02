@@ -34,7 +34,6 @@ using System.IO;
 #if WITH_MONO_DESIGN
 using Mono.Design;
 using DesignSurface = Mono.Design.DesignSurface;
-using UndoEngine = Mono.Design.UndoEngine;
 #endif
 
 namespace mwf_designer

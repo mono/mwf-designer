@@ -101,18 +101,6 @@ namespace mwf_designer
 			_workspace.Load ();
 		}
 
-		private IComponent GetPrimarySelection (Document document)
-		{
-			if (document == null)
-				throw new ArgumentNullException ("document");
-
-			ISelectionService service = document.DesignSurface.GetService (typeof (ISelectionService)) as ISelectionService;
-			if (service != null)
-				return (IComponent) service.PrimarySelection;
-			else
-				return null;
-		}
-
 		private void AddErrorsTab ()
 		{
 			ErrorListTabPage errors = new ErrorListTabPage ();
@@ -129,6 +117,7 @@ namespace mwf_designer
 			Document doc = workspace.CreateDocument (file, tab);
 			doc.Services.AddService (typeof (IMenuCommandService), new MenuCommandService (doc.Services));
 			doc.Load ();
+			doc.Services.AddService (typeof (UndoEngine), new UndoRedoEngine (doc.Services));
 			if (doc.LoadSuccessful) {
 				doc.Modified += OnDocumentModified;
 				workspace.ActiveDocument = doc;
@@ -153,8 +142,8 @@ namespace mwf_designer
 
 		private void OnActiveDocumentChanged (object sender, ActiveDocumentChangedEventArgs args)
 		{
-			object primarySelection = args.NewDocument != null ? GetPrimarySelection (args.NewDocument) : null;
-			propertyGrid.ActiveComponents = primarySelection != null ? new object[] { primarySelection } : new object[0];
+			if (args.NewDocument != null)
+				propertyGrid.Update (args.NewDocument.Services);
 		}
 
 		private void CloseDocument (Document doc)
@@ -203,9 +192,63 @@ namespace mwf_designer
 					CloseDocument (_workspace.ActiveDocument);
 		}
 
-		private void referencesToolStripMenuItem_Click (object sender, EventArgs e)
+		private void OnReferences_Clicked (object sender, EventArgs e)
 		{
 			new ReferencesDialog (_workspace.References).ShowDialog ();
+		}
+		
+		private void OnUndo_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				UndoRedoEngine undoEngine = _workspace.ActiveDocument.DesignSurface.GetService (typeof (UndoEngine)) as UndoRedoEngine;
+				if (undoEngine != null)
+					undoEngine.Undo ();
+			}
+		}
+
+		private void OnRedo_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				UndoRedoEngine undoEngine = _workspace.ActiveDocument.DesignSurface.GetService (typeof (UndoEngine)) as UndoRedoEngine;
+				if (undoEngine != null)
+					undoEngine.Redo ();
+			}
+		}
+
+		private void OnCut_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+				if (menuCommands != null)
+					menuCommands.FindCommand (StandardCommands.Cut).Invoke ();
+			}
+		}
+
+		private void OnCopy_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+				if (menuCommands != null)
+					menuCommands.FindCommand (StandardCommands.Copy).Invoke ();
+			}
+		}
+
+		private void OnPaste_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+				if (menuCommands != null)
+					menuCommands.FindCommand (StandardCommands.Paste).Invoke ();
+			}
+		}
+
+		private void OnDelete_Clicked (object sender, EventArgs args)
+		{
+			if (_workspace.ActiveDocument != null) {
+				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+				if (menuCommands != null)
+					menuCommands.FindCommand (StandardCommands.Delete).Invoke ();
+			}
 		}
 	}
 }

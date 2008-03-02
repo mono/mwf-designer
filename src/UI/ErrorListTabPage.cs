@@ -69,7 +69,6 @@ namespace mwf_designer
 
 			if (exception.Data["Details"] != null)
 				details = (string)exception.Data["Details"] + System.Environment.NewLine + System.Environment.NewLine + details;
-
 			_errorList.AddError (exception.Message, details);
 		}
 
