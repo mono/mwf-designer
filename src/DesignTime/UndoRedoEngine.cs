@@ -121,7 +121,7 @@ namespace mwf_designer
 				_undoUnits.Clear ();
 				_redoUnits.Clear ();
 			}
-			base.Dispose ();
+			base.Dispose (disposing);
 		}
 	}
 }

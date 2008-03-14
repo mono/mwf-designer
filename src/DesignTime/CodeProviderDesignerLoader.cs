@@ -86,6 +86,9 @@ namespace mwf_designer
 
 		private void ReportErrors (ICollection errors)
 		{
+			if (errors == null)
+				return;
+
 			IUIService service = base.GetService (typeof (IUIService)) as IUIService;
 			if (service != null) {
 				foreach (object error in errors) {

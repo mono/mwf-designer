@@ -1,3 +1,8 @@
+2008-03-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignTime/CodeProviderDesignerLoader.cs: Guard against a NRE in 
+	ReportErrors if the error collection is null. 
+
 2008-03-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Enable Undo, Redo, Cut, Copy, Paste, Delete as I've already implmented

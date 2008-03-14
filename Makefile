@@ -36,7 +36,7 @@ mono-design-run:
 	cd ${MD_BUILD_DIR};mono --debug mwf-designer.exe
 
 mono-design-msnet:
-	csc -debug -d:NET_2_0 -t:library -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:..\build\mwf-designer.exe src\*.cs src\*\*.cs
+	csc -debug -d:NET_2_0 -t:library -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:..\build\mwf-designer.exe src\*.cs src\*\*.cs src\*\*\*.cs
 
 
 
