@@ -75,7 +75,6 @@ namespace mwf_designer
 				UpdatePropertyGrid (serviceProvider);
 				PopulateComponentsList (serviceProvider);
 				EnableComponentsChangeNotification (serviceProvider);
-				// ShowEventsTab (); // MWF's PropertyGrid doesn't support EventsTab
 			}
 			_serviceProvider = serviceProvider;
 		}
@@ -94,6 +93,7 @@ namespace mwf_designer
 				object[] selection = new object[selectionCollection.Count];
 				selectionCollection.CopyTo (selection, 0);
 				_propertyGrid.SelectedObjects = selection;
+				ShowEventsTab ();
 			}
 		}
 
@@ -122,14 +122,17 @@ namespace mwf_designer
 		}
 
 		// MWF's PropertyGrid doesn't support EventsTab
-		//
-		// private void ShowEventsTab ()
-		// {
-		// 	_propertyGrid.PropertyTabs.AddTabType (typeof (System.Windows.Forms.Design.EventsTab));
-		// 	_propertyGrid.Site = PrimarySelection.Site;
-		// 	_propertyGrid.GetType ().InvokeMember ("ShowEventsButton", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
-		// 					   null, _propertyGrid, new object [] { true });
-		// }
+		// 
+		private void ShowEventsTab ()
+		{
+			IComponent component = _propertyGrid.SelectedObject as IComponent;
+			if (component != null) {
+				_propertyGrid.Site = component.Site;
+				_propertyGrid.PropertyTabs.AddTabType (typeof (System.Windows.Forms.Design.EventsTab));
+				_propertyGrid.GetType ().InvokeMember ("ShowEventsButton", BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+								   null, _propertyGrid, new object [] { true });
+			}
+		}
 
 		private void OnPrimarySelectionChanged (object sender, EventArgs args)
 		{
@@ -138,14 +141,13 @@ namespace mwf_designer
 			if (container == null || selectionService == null)
 				return;
 
+			_updating = true;
 			IComponent primarySelection = selectionService.PrimarySelection as IComponent;
 			if (primarySelection != null && primarySelection.Site != null && 
-			    primarySelection.Site.Name != null) {
-				_updating = true;
+			    primarySelection.Site.Name != null)
 				_componentsCombo.SelectedItem = primarySelection.Site.Name;
-				UpdatePropertyGrid (_serviceProvider);
-				_updating = false;
-			}
+			UpdatePropertyGrid (_serviceProvider);
+			_updating = false;
 		}
 
 		private void EnableComponentsChangeNotification (IServiceProvider provider)

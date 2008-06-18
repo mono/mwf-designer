@@ -120,7 +120,8 @@ namespace mwf_designer
 
 		bool IUIService.CanShowComponentEditor (object component)
 		{
-			throw new NotImplementedException ();
+			return false; // TODO
+			// throw new NotImplementedException ();
 		}
 
 		bool IUIService.ShowComponentEditor (object component, IWin32Window parent)

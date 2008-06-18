@@ -1,3 +1,7 @@
+2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* UI/PropertyGrid.cs: Handle removing of the root component.
+
 2008-03-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignTime/CodeProviderDesignerLoader.cs: Guard against a NRE in 
