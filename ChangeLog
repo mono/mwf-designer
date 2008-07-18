@@ -1,3 +1,7 @@
+2008-07-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* UI/PropertyGrid.cs, UI/MainView.cs: Clear the propertygrid.
+
 2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* UI/PropertyGrid.cs: Handle removing of the root component.

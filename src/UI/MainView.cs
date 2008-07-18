@@ -151,6 +151,7 @@ namespace mwf_designer
 			doc.Modified -= OnDocumentModified;
 			surfaceTabs.TabPages.Remove (surfaceTabs.SelectedTab);
 			_workspace.CloseDocument (doc);
+			propertyGrid.Clear ();
 		}
 
 		private void newToolStripMenuItem_Click (object sender, EventArgs e)

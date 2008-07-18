@@ -65,6 +65,11 @@ namespace mwf_designer
 			selectionService.SetSelectedComponents (new IComponent[] { selectedComponent });
 		}
 
+		public void Clear ()
+		{
+			Update (null);
+		}
+
 		public void Update (IServiceProvider serviceProvider)
 		{
 			if (serviceProvider == null) {

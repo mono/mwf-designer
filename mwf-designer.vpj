@@ -25,8 +25,8 @@
 				SaveOption="SaveNone"
 				RunFromDir="%rw"
 				CaptureOutputWith="ProcessBuffer"
-				BuildFirst="1"
-				ClearProcessBuffer="1">
+				ClearProcessBuffer="1"
+				BuildFirst="1">
 				<Exec CmdLine="make mono-design-run"/>
 			</Target>
 			<Target
