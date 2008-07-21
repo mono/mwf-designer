@@ -27,20 +27,20 @@
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1"
 				BuildFirst="1">
-				<Exec CmdLine="make mono-design-run"/>
+				<Exec CmdLine="make run"/>
 			</Target>
 			<Target
 				Name="Build MS_NET"
 				MenuCaption="&amp;Build MS_NET"
 				CaptureOutputWith="ProcessBuffer"
 				ClearProcessBuffer="1">
-				<Exec CmdLine="csc -debug -d:NET_2_0 -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:..\build\mwf-designer.exe %{*.cs}"/>
+				<Exec CmdLine="csc -debug -d:NET_2_0 -r:System.Design.dll,System.Windows.Forms.dll,System.Drawing.dll,System.Data.dll,..\build\Mono.Design.dll,..\build\ICSharpCode.NRefactory.dll -out:build\mwf-designer.exe %{*.cs}"/>
 			</Target>
 		</Menu>
 		<Includes>
 		</Includes>
 		<Dependencies Name="Release">
-			<Dependency Project="../Mono.Design/Mono.Design.vpj"/>
+			<Dependency Project="deps/Mono.Design/Mono.Design.vpj"/>
 		</Dependencies>
 	</Config>
 	<CustomFolders>

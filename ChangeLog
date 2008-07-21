@@ -1,3 +1,7 @@
+2008-07-21  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Integrate Mono.Design for building with Visual Studio.
+
 2008-07-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* UI/PropertyGrid.cs, UI/MainView.cs: Clear the propertygrid.

@@ -1,0 +1,123 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E8A1D7EA-AB41-4908-8715-F76FC155A164}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mwf_designer</RootNamespace>
+    <AssemblyName>mwf-designer</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>build\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0,DEBUG,WITH_MONO_DESIGN</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>build\</OutputPath>
+    <DefineConstants>TRACE;NET_2_0,DEBUG,WITH_MONO_DESIGN</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.NRefactory, Version=2.2.1.2648, Culture=neutral, PublicKeyToken=efe927acf176eea2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>deps\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\AssemblyInfo.cs" />
+    <Compile Include="src\DesignTime\CodeProvider.cs" />
+    <Compile Include="src\DesignTime\CodeProviderDesignerLoader.cs" />
+    <Compile Include="src\DesignTime\CodeProviderEventBindingService.cs" />
+    <Compile Include="src\DesignTime\ToolboxFiller.cs" />
+    <Compile Include="src\DesignTime\TypeResolutionService.cs" />
+    <Compile Include="src\DesignTime\UndoRedoEngine.cs" />
+    <Compile Include="src\Program.cs" />
+    <Compile Include="src\Project\Document.cs" />
+    <Compile Include="src\Project\References.cs" />
+    <Compile Include="src\Project\TemplateManager.cs" />
+    <Compile Include="src\Project\Workspace.cs" />
+    <Compile Include="src\UI\ErrorList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\UI\ErrorList.Designer.cs">
+      <DependentUpon>ErrorList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\UI\ErrorListTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\UI\MainView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\UI\MainView.Designer.cs">
+      <DependentUpon>MainView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\UI\NewFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\UI\NewFileDialog.Designer.cs">
+      <DependentUpon>NewFileDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\UI\PropertyGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\UI\PropertyGrid.Designer.cs">
+      <DependentUpon>PropertyGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\UI\ReferencesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\UI\ReferencesDialog.Designer.cs">
+      <DependentUpon>ReferencesDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\UI\ToolBoxList\ToolBoxGroupHeader.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\UI\ToolBoxList\ToolBoxGroupPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\UI\ToolBoxList\ToolBoxList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\UI\ToolBoxList\ToolBoxListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ChangeLog" />
+    <None Include="LICENSE" />
+    <None Include="Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="deps\Mono.Design\Mono.Design.csproj">
+      <Project>{53DB609E-CCAB-40F8-BA30-E98B9111627A}</Project>
+      <Name>Mono.Design</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
