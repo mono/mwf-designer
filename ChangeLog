@@ -1,3 +1,8 @@
+2008-07-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignTime/CodeProvider.cs: Make the search for a code behind file 
+	case insensitive. 
+
 2008-07-23  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* UI/NewFileDialog.cs: Validate text entries.

@@ -36,6 +36,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.CSharp;
 using Microsoft.VisualBasic;
+using System.Globalization;
 
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Ast;
@@ -91,9 +92,17 @@ namespace mwf_designer
 
 		internal static string GetCodeBehindFileName (string file)
 		{
-			return Path.Combine (Path.GetDirectoryName (file), 
-					     Path.GetFileNameWithoutExtension (file) + ".Designer" + 
-					     Path.GetExtension (file));
+			string codeBehindFileName = Path.Combine (Path.GetDirectoryName (file), 
+								  (Path.GetFileNameWithoutExtension (file) + 
+								   ".Designer" + Path.GetExtension (file)));
+
+			foreach (string f in Directory.GetFiles (Path.GetDirectoryName (file))) {
+				Console.WriteLine (f);
+				if (String.Compare (f, codeBehindFileName, true, CultureInfo.InvariantCulture) == 0)
+					return f;
+			}
+
+			return null;
 		}
 
 		public static bool IsValid (string file)
