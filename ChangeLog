@@ -1,3 +1,8 @@
+2008-07-23  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* UI/NewFileDialog.cs: Validate text entries.
+	 Patch by Guillaume Simart <gsimard@gmail.com>
+
 2008-07-21  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Integrate Mono.Design for building with Visual Studio.

@@ -92,13 +92,21 @@ namespace mwf_designer
 			_namespace = namespaceTextbox.Text;
 			_class = classTextbox.Text;
 			_fileName = filenameTextbox.Text;
-			if (_templateName == null || _namespace == null || _class == null || _fileName == null) {
+			if (!IsValidEntry (_templateName) || !IsValidEntry (_namespace) || 
+			    !IsValidEntry (_class) || !IsValidEntry (_fileName)) {
 				MessageBox.Show ("Please select a template from the list, specify the class and namespace names and " +
 					"then choose file name and location.");
 			} else {
 				this.DialogResult = DialogResult.OK;
 				this.Close();
 			}
+		}
+
+		private bool IsValidEntry (string s)
+		{
+			if (s == null || s == String.Empty)
+				return false;
+			return true;
 		}
 	}
 }
