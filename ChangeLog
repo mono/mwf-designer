@@ -1,3 +1,7 @@
+2008-07-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Misc fixes and improvements. 
+
 2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Add a mono-design-update build target to the Makefile to allow 

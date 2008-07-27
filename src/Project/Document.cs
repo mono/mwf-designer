@@ -97,16 +97,19 @@ namespace mwf_designer
 				// Mark as Modified on ComponentChanged
 				//
 				IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
-				changeService.ComponentChanged += delegate {
-					_modified = true;
-					if (Modified != null)
-						Modified (this, EventArgs.Empty);
-				};
+				changeService.ComponentChanged += new ComponentChangedEventHandler (OnComponentChanged);
 				if (Loaded != null)
 					Loaded (this, EventArgs.Empty);
 			}
 
 			return _loaded;
+		}
+
+		private void OnComponentChanged (object sender, ComponentChangedEventArgs args)
+		{
+			_modified = true;
+			if (Modified != null)
+				Modified (this, EventArgs.Empty);
 		}
 
 		public bool LoadSuccessful {
@@ -149,8 +152,12 @@ namespace mwf_designer
 
 		public void Dispose ()
 		{
-			_surface.Dispose ();
-			_codeProvider = null;
+			if (_surface.IsLoaded) {
+				IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
+				changeService.ComponentChanged -= new ComponentChangedEventHandler (OnComponentChanged);
+				_surface.Dispose ();
+				_codeProvider = null;
+			}
 		}
 
 		public event EventHandler Loaded;

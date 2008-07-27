@@ -12,7 +12,7 @@ net-1:
 	export MCS_COLORS=disable;mcs -d:DEBUG,NET_1_1 -t:library -debug -r:${REFERENCES} -out:${ASSEMBLY} ${SOURCES}
 
 clean:
-	rm .generated
+	rm -f .generated
 
 update: clean generate-md
 
