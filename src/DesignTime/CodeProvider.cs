@@ -94,7 +94,6 @@ namespace mwf_designer
 								   ".Designer" + Path.GetExtension (file)));
 
 			foreach (string f in Directory.GetFiles (Path.GetDirectoryName (file))) {
-				Console.WriteLine (f);
 				if (String.Compare (f, codeBehindFileName, true, CultureInfo.InvariantCulture) == 0)
 					return f;
 			}
