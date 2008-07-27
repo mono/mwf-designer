@@ -22,3 +22,7 @@ mono-design: prepare
 	cd ${DEPS_DIR}/Mono.Design && make
 	export MCS_COLORS=disable;gmcs -debug -r:${REFERENCES},${DEPS_DIR}/Mono.Design.dll -out:${BUILD_DIR}/${ASSEMBLY} ${SOURCES}
 
+mono-design-update:
+	cd ${DEPS_DIR}/Mono.Design && make update
+	
+

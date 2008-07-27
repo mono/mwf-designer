@@ -1,5 +1,10 @@
 2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Add a mono-design-update build target to the Makefile to allow 
+	an user to regenerate Mono.Design with upstream System.Design.
+
+2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Remove a leftover CWL. 
 
 2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
