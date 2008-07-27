@@ -80,17 +80,14 @@ namespace mwf_designer
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
 
-			_codeBehindFileName = GetCodeBehindFileName (fileName);
-			if (!File.Exists (_codeBehindFileName))
-				throw new InvalidOperationException ("No codebehind file for " + fileName);
-
 			_fileName = fileName;
+			_codeBehindFileName = FindCodeBehindFile (_fileName);
 			_provider = GetCodeProvider (fileName);
 			_informationProvider = new EnvironmentInformationProvider (resolutionSvc);
 		}
 
 
-		internal static string GetCodeBehindFileName (string file)
+		private static string FindCodeBehindFile (string file)
 		{
 			string codeBehindFileName = Path.Combine (Path.GetDirectoryName (file), 
 								  (Path.GetFileNameWithoutExtension (file) + 
@@ -105,9 +102,19 @@ namespace mwf_designer
 			return null;
 		}
 
-		public static bool IsValid (string file)
+		public static string GetCodeBehindFileName (string file)
 		{
-			return GetCodeBehindFileName (file) != null;
+			if (string.IsNullOrEmpty (file))
+				throw new ArgumentException ("file");
+
+			return Path.Combine (Path.GetDirectoryName (file), 
+					     (Path.GetFileNameWithoutExtension (file) + 
+					      ".Designer" + Path.GetExtension (file)));
+		}
+
+		public static bool IsValidFile (string file)
+		{
+			return FindCodeBehindFile (file) != null;
 		}
 
 		public CodeDomProvider CodeDomProvider {
@@ -117,7 +124,9 @@ namespace mwf_designer
 
 		public CodeCompileUnit Parse ()
 		{	
-			return MergeParse (_fileName, _codeBehindFileName);
+			if (_codeBehindFileName != null)
+				return MergeParse (_fileName, _codeBehindFileName);
+			return null;
 		}
 
 		// The .Designer partial file produced by Visual Studio and SharpDevelop
@@ -200,6 +209,9 @@ namespace mwf_designer
 
 		public void Write (CodeCompileUnit unit)
 		{
+			if (_codeBehindFileName == null)
+				return;
+
 			PreProcessCompileUnit (unit);
 
 			string namesp = null;

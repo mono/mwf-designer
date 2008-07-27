@@ -1,3 +1,7 @@
+2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Fix the creation of new files.
+
 2008-07-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignTime/CodeProvider.cs: Make the search for a code behind file 

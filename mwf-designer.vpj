@@ -14,7 +14,7 @@
 				MenuCaption="&amp;Build"
 				CaptureOutputWith="ProcessBuffer"
 				SaveOption="SaveWorkspaceFiles"
-				RunFromDir="%rw"
+				RunFromDir="%rp"
 				ClearProcessBuffer="1"
 				DependsRef="Release">
 				<Exec CmdLine="make mono-design"/>

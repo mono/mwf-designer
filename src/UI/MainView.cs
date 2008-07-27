@@ -70,7 +70,7 @@ namespace mwf_designer
 				if (surfaceTabs.TabPages.ContainsKey (dialog.FileName)) {// tab page for file already existing
 					surfaceTabs.SelectedTab = surfaceTabs.TabPages[dialog.FileName];
 				} else {
-					if (CodeProvider.IsValid (dialog.FileName))
+					if (CodeProvider.IsValidFile (dialog.FileName))
 						LoadDocument (dialog.FileName, _workspace);
 					else
 						MessageBox.Show ("No corresponding .Designer file found for " + dialog.FileName);
@@ -159,7 +159,7 @@ namespace mwf_designer
 			NewFileDialog dialog = new NewFileDialog (TemplateManager.AvailableTemplates);
 			if (dialog.ShowDialog () == DialogResult.OK) {
 				TemplateManager.WriteCode (dialog.Template, dialog.File, CodeProvider.GetCodeBehindFileName (dialog.File), 
-										   dialog.Namespace, dialog.Class);
+							   dialog.Namespace, dialog.Class);
 				this.LoadDocument (dialog.File, _workspace);
 			}
 		}
