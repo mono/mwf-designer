@@ -96,6 +96,8 @@ namespace mwf_designer
 			this.filenameTextbox.Name = "filenameTextbox";
 			this.filenameTextbox.Size = new System.Drawing.Size(178, 20);
 			this.filenameTextbox.TabIndex = 6;
+			this.filenameTextbox.ReadOnly = true;
+			this.filenameTextbox.Click += new System.EventHandler(this.filenameTextbox_Click);
 			// 
 			// label3
 			// 

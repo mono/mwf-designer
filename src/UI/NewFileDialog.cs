@@ -79,11 +79,22 @@ namespace mwf_designer
 
 		private void browseButton_Click(object sender, EventArgs e)
 		{
+			filenameTextbox.Text = SelectSaveLocation ();
+		}
+
+		private void filenameTextbox_Click (object sender, EventArgs e)
+		{
+			filenameTextbox.Text = SelectSaveLocation ();
+		}
+
+		private string SelectSaveLocation ()
+		{
 			SaveFileDialog dialog = new SaveFileDialog();
-            dialog.OverwritePrompt = true;
+			dialog.OverwritePrompt = true;
 			dialog.Filter = "C# Source Code (*.cs)|*.cs| VB.NET Source Code (*.vb)|*.vb|Other|*.*";
 			if (dialog.ShowDialog() == DialogResult.OK)
-				filenameTextbox.Text = dialog.FileName;
+				return dialog.FileName;
+			return null;
 		}
 
 		private void doneButton_Click(object sender, EventArgs e)
