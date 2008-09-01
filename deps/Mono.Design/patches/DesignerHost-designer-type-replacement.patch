@@ -52,8 +52,6 @@
 +				type = typeof (Mono.Design.ComponentDesigner);
 +			else if (name.StartsWith ("Mono.Design"))
 +				type = Type.GetType (name);
-+			else
-+				type = Type.GetType (name);
 +
 +			if (type != null)
 +				Console.WriteLine ("type " + type.FullName +" replaced " + name);

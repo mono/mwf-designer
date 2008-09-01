@@ -1,3 +1,9 @@
+2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* deps/Mono.Design/patches/DesignerHost-designer-type-replacement.patch, 
+	  deps/Mono.Design/patches/DesignerSerializationManager-serializer-type-replacement.patch:
+	Do not mix MSNET and Mono.Design designer/serializer types.
+
 2008-08-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Make the file path textbox readonly in the New File dialog.
