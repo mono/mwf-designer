@@ -12,7 +12,7 @@
  										       BindingFlags.CreateInstance | BindingFlags.Instance | 
  										       BindingFlags.Public | BindingFlags.NonPublic, 
  										       null, null, null);
-@@ -283,6 +283,24 @@
+@@ -283,6 +283,22 @@
  			return serializer;
  		}
  

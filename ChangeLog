@@ -1,3 +1,11 @@
+2008-09-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* deps/Mono.Design/patches/DesignerHost-designer-type-replacement.patch, 
+	  deps/Mono.Design/patches/DesignerSerializationManager-serializer-type-replacement.patch:
+	  Fix the hunk headers, so that the patches actually apply.
+	* deps/Mono.Design/generate-mono-design.py: Report patching errors.
+	[Fixes bug #418197]
+
 2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* deps/Mono.Design/patches/DesignerHost-designer-type-replacement.patch, 

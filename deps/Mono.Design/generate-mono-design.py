@@ -96,9 +96,13 @@ def apply_patches (patches):
     for patch in patches:
         if os.name == "nt":
             file_lf_to_clrf (patch); # fix line endings just in case
-            os.system ("patches\\patch.exe -p0 -i \"" + patch + "\"")
+            out, inn, err = os.popen3 ("patches\\patch.exe -p0 -i \"" + patch + "\"")
         else:
-            os.system ("patch -p0 -i \"" + patch + "\"")
+            out, inn, err = os.popen3 ("patch -p0 -i \"" + patch + "\"")
+
+        error = err.read ()
+        if len (error) > 0:
+            print os.path.basename (patch) + ": " + error
 
 if __name__ == "__main__":
         main ()
