@@ -284,7 +284,7 @@ namespace mwf_designer
 			if (klass != null) {
 				foreach (INode child in fileParser.CompilationUnit.Children) {
 					MethodDeclaration methodDeclaration = child as MethodDeclaration;
-					if (methodDeclaration.Parameters.Count == parameters.Length) {
+					if (methodDeclaration != null && methodDeclaration.Parameters.Count == parameters.Length) {
 						bool match = false;
 						for (int i=0; i < methodDeclaration.Parameters.Count; i++) {
 							if (methodDeclaration.Parameters[i].TypeReference.Type != parameters[i].ParameterType.Name)
