@@ -1,3 +1,8 @@
+2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeProvider.cs: Don't assume that all definitions will be method 
+	definitions in the .Designer file. Fixes a NRE.
+
 2008-09-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* deps/Mono.Design/patches/DesignerHost-designer-type-replacement.patch, 

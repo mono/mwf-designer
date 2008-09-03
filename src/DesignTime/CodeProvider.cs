@@ -314,7 +314,7 @@ namespace mwf_designer
 						if (declaration != null) {
 							foreach (INode child2 in declaration.Children) {
 								MethodDeclaration methodDecl = child2 as MethodDeclaration;
-								if (methodDecl.Name == "InitializeComponent")
+								if (methodDecl != null && methodDecl.Name == "InitializeComponent")
 									return declaration;
 							}
 						}
