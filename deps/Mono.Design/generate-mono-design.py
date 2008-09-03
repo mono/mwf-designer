@@ -20,16 +20,14 @@ def main ():
         print exc
 
 def fetch_source_code (files):
-    svn = "http://anonsvn.mono-project.com/source/trunk/mcs/"
     for file in files:
         directory = os.path.dirname (file)
         if directory != "": # quick hack to only download assembly files and not the ones we already have
             if not os.path.exists (directory):
                 os.makedirs (directory)
-
             for i in range (1, 4): # retry 3 times
                 try:
-                    webFile = urllib.urlopen (svn + file)
+                    webFile = urllib.urlopen (file_to_url (file))
                     localFile = open (file, 'w+')
                     localFile.write (webFile.read())
                     webFile.close ()
@@ -39,6 +37,9 @@ def fetch_source_code (files):
                 except Exception, exc:
                     print "E " + file
                     print exc
+
+def file_to_url (file):
+    return "http://anonsvn.mono-project.com/viewvc/trunk/mcs/" + file + "?view=co"
 
 def get_files ():
     try:

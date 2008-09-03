@@ -1,5 +1,12 @@
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* generate-mono-design.py: Update to reflect anonsvn viewvc update, 
+	which broke the downloading process.
+	* Mono.Design/Makefile: force-invoke generate-md rule else make doesn't.
+	I have no idea why.
+
+2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CodeProvider.cs: Fix CreateUniqueMethodName.
 
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>

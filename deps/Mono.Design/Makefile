@@ -14,7 +14,8 @@ net-1:
 clean:
 	rm -f .generated
 
-update: clean generate-md
+update: clean
+	make generate-md
 
 generate-md:
 ifeq (,$(findstring .generated,$(wildcard .*)))
