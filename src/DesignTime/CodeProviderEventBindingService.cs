@@ -52,23 +52,27 @@ namespace mwf_designer
 					
 		protected override string CreateUniqueMethodName (IComponent component, EventDescriptor eventDescriptor)
 		{
-			string name = component.Site.Name + eventDescriptor.Name;
+			string methodName = component.Site.Name + "_" + eventDescriptor.Name;
 			ICollection compatibleMethodNames = this.GetCompatibleMethods (eventDescriptor);
+			if (compatibleMethodNames.Count == 0)
+				return methodName;
+
 			bool interrupt = false;
 			int i = 0;
 			while (!interrupt) {
-				string tmpName = name;
+				string tmpName = methodName;
 				foreach (string existingName in compatibleMethodNames) {
 					if (existingName == tmpName)
 						tmpName += i.ToString ();
 					else {
-						name = tmpName;
+						methodName = tmpName;
 						interrupt = true;
 					}
 				}
 				i++;
 			}
-			return null;
+
+			return methodName;
 		}
 
 		protected override ICollection GetCompatibleMethods (EventDescriptor eventDescriptor)

@@ -1,5 +1,9 @@
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CodeProvider.cs: Fix CreateUniqueMethodName.
+
+2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CodeProvider.cs: Fix one more NRE in GetCompatibleMethods.
 
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
