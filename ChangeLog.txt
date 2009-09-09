@@ -1,5 +1,10 @@
 2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Remove unneeded Toolbox code. We now support proper point-resize-click 
+	  control creation.
+
+2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Update Visual Studio project files.
 
 2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>

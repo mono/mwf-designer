@@ -56,7 +56,6 @@ namespace mwf_designer
 		public MainView ()
 		{
 			InitializeComponent ();
-			toolbox.ToolPicked += OnToolbox_ToolPicked;
 			LoadWorkspace ();
 		}
 
@@ -75,16 +74,6 @@ namespace mwf_designer
 					else
 						MessageBox.Show ("No corresponding .Designer file found for " + dialog.FileName);
 				}
-			}
-		}
-
-		private void OnToolbox_ToolPicked (object sender, EventArgs args)
-		{
-			if (_workspace != null && _workspace.ActiveDocument != null) {
-				IDesignerHost host = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IDesignerHost)) as IDesignerHost;
-				IToolboxService tb = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IToolboxService)) as IToolboxService;
-				if (host != null && tb != null)
-					((IToolboxUser)(DocumentDesigner)host.GetDesigner (host.RootComponent)).ToolPicked (tb.GetSelectedToolboxItem ());
 			}
 		}
 

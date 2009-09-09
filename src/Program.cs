@@ -30,7 +30,7 @@ namespace mwf_designer
 
 	private static void OnException (Exception e)
 	{
-		MessageBox.Show ("A fatal error occured. Please file a bug report with the following details (Ctrl-C to copy to clipboard):" + 
+		MessageBox.Show ("A fatal error occurred. Please file a bug report with the following details (Ctrl-C to copy to clipboard):" + 
 				 System.Environment.NewLine + System.Environment.NewLine +
 				 e.ToString (), "Fatal Error");
 	}
