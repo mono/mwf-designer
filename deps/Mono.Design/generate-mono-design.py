@@ -3,21 +3,22 @@ import os
 import os.path
 import re
 import sys
-import urllib
+import subprocess
+import urllib.request, urllib.error
 
 def main ():
     try:
-        print "--> Step 1: Fetching source code..."
+        print ("--> Step 1: Fetching source code...")
         files = get_files ();
         fetch_source_code (files)
-        print "--> Step 2: Applying patches..."
+        print ("--> Step 2: Applying patches...")
         apply_patches (get_patches ())
-        print "--> Step 3: Replacing namespaces..."
+        print ("--> Step 3: Replacing namespaces...")
         replace_namespaces (files)
-        print "Done!"
-    except Exception, exc:
-        print "Unexpected Error: "
-        print exc
+        print ("Done!")
+    except Exception as exc:
+        print ("Unexpected Error: ")
+        print (exc)
 
 def fetch_source_code (files):
     for file in files:
@@ -27,16 +28,16 @@ def fetch_source_code (files):
                 os.makedirs (directory)
             for i in range (1, 4): # retry 3 times
                 try:
-                    webFile = urllib.urlopen (file_to_url (file))
-                    localFile = open (file, 'w+')
+                    webFile = urllib.request.urlopen (file_to_url (file))
+                    localFile = open (file, 'wb+')
                     localFile.write (webFile.read())
                     webFile.close ()
                     localFile.close ()
-                    print "A " + file
+                    print ("A " + file)
                     break
-                except Exception, exc:
-                    print "E " + file
-                    print exc
+                except Exception as exc:
+                    print ("E " + file)
+                    print (exc)
 
 def file_to_url (file):
     return "http://anonsvn.mono-project.com/viewvc/trunk/mcs/" + file + "?view=co"
@@ -50,7 +51,7 @@ def get_files ():
         file.close ()
         return filesList
     except Exception:
-        print "Unable to open file: Mono.Design.sources"
+        print ("Unable to open file: Mono.Design.sources")
         return None
 
 def replace_namespaces (filesList):
@@ -69,8 +70,8 @@ def replace_namespaces (filesList):
                 outputFile.write (output)
                 outputFile.flush ()
                 outputFile.close ()
-        except Exception, exc:
-            print exc
+        except Exception as exc:
+            print (exc)
 
 def get_patches ():
     patches = []
@@ -87,7 +88,7 @@ def file_lf_to_clrf (fileName):
         inputFile = open (fileName, "rb")
         input = inputFile.read ()
         inputFile.close ()
-        output = re.sub ("\r?\n", "\r\n", input)
+        output = re.sub (bytes ("\r?\n", "utf8"), bytes ("\r\n", "utf8"), input)
         outputFile = open (fileName, "wb")
         outputFile.write (output)
         outputFile.flush ()
@@ -95,15 +96,15 @@ def file_lf_to_clrf (fileName):
 
 def apply_patches (patches):
     for patch in patches:
+        returnCode = 0
         if os.name == "nt":
             file_lf_to_clrf (patch); # fix line endings just in case
-            out, inn, err = os.popen3 ("patches\\patch.exe -p0 -i \"" + patch + "\"")
+            returnCode = subprocess.call ("patches\\patch.exe -p0 -i \"" + patch + "\"")
         else:
-            out, inn, err = os.popen3 ("patch -p0 -i \"" + patch + "\"")
+            returnCode = subprocess.call ("patch -p0 -i \"" + patch + "\"")
 
-        error = err.read ()
-        if len (error) > 0:
-            print os.path.basename (patch) + ": " + error
+        if returnCode < 0:
+            print (os.path.basename (patch) + ": " + error)
 
 if __name__ == "__main__":
         main ()

@@ -1,5 +1,9 @@
 2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* deps/Mono.Design/generate-mono-design.py: Update for Python 3 and 2.6
+
+2009-09-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Add .txt extension to the text files
 
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
