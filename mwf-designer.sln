@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mwf-designer", "mwf-designer.csproj", "{E8A1D7EA-AB41-4908-8715-F76FC155A164}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Design", "deps\Mono.Design\Mono.Design.csproj", "{53DB609E-CCAB-40F8-BA30-E98B9111627A}"
