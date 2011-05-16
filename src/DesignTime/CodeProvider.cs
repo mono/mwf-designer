@@ -89,6 +89,7 @@ namespace mwf_designer
 
 		private static string FindCodeBehindFile (string file)
 		{
+			file = Path.GetFullPath (file);
 			string codeBehindFileName = Path.Combine (Path.GetDirectoryName (file), 
 								  (Path.GetFileNameWithoutExtension (file) + 
 								   ".Designer" + Path.GetExtension (file)));
