@@ -15,7 +15,7 @@ prepare:
 
 run: prepare
 	cp ${DEPS_DIR}/*.dll ${BUILD_DIR}
-	cp ${DEPS_DIR}/*.mdb ${BUILD_DIR}
+	cp ${DEPS_DIR}/*.mdb ${BUILD_DIR} || true
 	cd ${BUILD_DIR} && mono --debug mwf-designer.exe
 
 mono-design: prepare
@@ -24,5 +24,3 @@ mono-design: prepare
 
 mono-design-update:
 	cd ${DEPS_DIR}/Mono.Design && make update
-	
-

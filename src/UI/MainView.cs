@@ -53,10 +53,23 @@ namespace mwf_designer
 		private ToolboxFiller _toolboxFiller;
 		private readonly string MODIFIED_MARKER = " *";
 
-		public MainView ()
+		public MainView (string[] args)
 		{
 			InitializeComponent ();
 			LoadWorkspace ();
+			foreach (string s in args)
+				LoadFile(s);
+		}
+
+		private void LoadFile(string f) {
+			if (surfaceTabs.TabPages.ContainsKey (f)) {// tab page for file already existing
+				surfaceTabs.SelectedTab = surfaceTabs.TabPages[f];
+			} else {
+				if (CodeProvider.IsValidFile (f))
+					LoadDocument (f, _workspace);
+				else
+					MessageBox.Show ("No corresponding .Designer file found for " + f);
+			}
 		}
 
 		private void openToolStripMenuItem_Click (object sender, EventArgs e)
@@ -65,16 +78,8 @@ namespace mwf_designer
 			dialog.CheckFileExists = true;
 			dialog.Multiselect = false;
 			dialog.Filter = "C# Source Code (*.cs)|*.cs|VB.NET Source Code (*.vb)|*.vb";
-			if (dialog.ShowDialog () == DialogResult.OK) {
-				if (surfaceTabs.TabPages.ContainsKey (dialog.FileName)) {// tab page for file already existing
-					surfaceTabs.SelectedTab = surfaceTabs.TabPages[dialog.FileName];
-				} else {
-					if (CodeProvider.IsValidFile (dialog.FileName))
-						LoadDocument (dialog.FileName, _workspace);
-					else
-						MessageBox.Show ("No corresponding .Designer file found for " + dialog.FileName);
-				}
-			}
+			if (dialog.ShowDialog () == DialogResult.OK)
+				LoadFile(dialog.FileName);
 		}
 
 		private void LoadWorkspace ()
