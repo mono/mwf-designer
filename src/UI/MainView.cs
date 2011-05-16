@@ -62,6 +62,7 @@ namespace mwf_designer
 		}
 
 		private void LoadFile(string f) {
+			System.Console.WriteLine("LoadFile: {0}", f);
 			if (surfaceTabs.TabPages.ContainsKey (f)) {// tab page for file already existing
 				surfaceTabs.SelectedTab = surfaceTabs.TabPages[f];
 			} else {
