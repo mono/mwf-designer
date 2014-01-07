@@ -10,7 +10,7 @@ pathsearch = $(firstword $(wildcard $(addsuffix /$(1),$(subst :, ,$(PATH)))))
 
 COMPILER = $(call pathsearch,mcs)
 ifeq ($(strip $(COMPILER)),)
-    COMPILER = dmcs
+    COMPILER = $(call pathsearch,dmcs)
 endif
 
 ifeq ($(strip $(COMPILER)),)
