@@ -7,7 +7,12 @@ MD_DIST_DIR = ${MD_BUILD_DIR}/mwf-designer
 ASSEMBLY=mwf-designer.exe
 
 pathsearch = $(firstword $(wildcard $(addsuffix /$(1),$(subst :, ,$(PATH)))))
-COMPILER = $(call pathsearch,dmcs)
+
+COMPILER = $(call pathsearch,mcs)
+ifeq ($(strip $(COMPILER)),)
+    COMPILER = dmcs
+endif
+
 ifeq ($(strip $(COMPILER)),)
     COMPILER = gmcs
 endif
