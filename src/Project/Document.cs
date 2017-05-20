@@ -30,10 +30,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.IO;
-
 #if WITH_MONO_DESIGN
-using Mono.Design;
-using DesignSurface = Mono.Design.DesignSurface;
+using DesignSurface = System.ComponentModel.Design.DesignSurface;
+
 #endif
 
 namespace mwf_designer
@@ -49,16 +48,16 @@ namespace mwf_designer
 		private CodeProviderDesignerLoader _loader;
 		private bool _modified;
 
-		public Document (string fileName, Workspace workspace)
+		public Document(string fileName, Workspace workspace)
 		{
 			if (workspace == null)
-				throw new ArgumentNullException ("workspace");
+				throw new ArgumentNullException("workspace");
 			if (fileName == null)
-				throw new ArgumentNullException ("fileName");
+				throw new ArgumentNullException("fileName");
 			_fileName = fileName;
 			_workspace = workspace;
 			_loaded = false;
-			_surface = new DesignSurface (_workspace.Services);
+			_surface = new DesignSurface(_workspace.Services);
 		}
 
 		// Note that this ServiceContainer is not the workspace one.
@@ -68,11 +67,12 @@ namespace mwf_designer
 		// 
 		// Basically added services will be available only to the document
 		//
-		public IServiceContainer Services {
-			get { return _surface.GetService (typeof (IServiceContainer)) as IServiceContainer; }
+		public IServiceContainer Services
+		{
+			get { return _surface.GetService(typeof(IServiceContainer)) as IServiceContainer; }
 		}
 
-		public bool Load ()
+		public bool Load()
 		{
 			if (_loaded)
 				return true;
@@ -82,80 +82,92 @@ namespace mwf_designer
 			// Initialize code provider, loader and surface
 			//
 
-			ITypeResolutionService resolutionSvc = _surface.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService;
-			_codeProvider = new CodeProvider (this.FileName, resolutionSvc);
-			_loader = new CodeProviderDesignerLoader (_codeProvider);
+			ITypeResolutionService resolutionSvc = _surface.GetService(typeof(ITypeResolutionService)) as ITypeResolutionService;
+			_codeProvider = new CodeProvider(this.FileName, resolutionSvc);
+			_loader = new CodeProviderDesignerLoader(_codeProvider);
 
 			// Initialize and add the services
 			//
-			IServiceContainer container = (IServiceContainer) _surface.GetService (typeof (IServiceContainer));
-			container.AddService (typeof (IEventBindingService),
-					      new CodeProviderEventBindingService (_codeProvider, (IServiceProvider) container));
-			_surface.BeginLoad (_loader);
-			if (_surface.IsLoaded) {
+			IServiceContainer container = (IServiceContainer) _surface.GetService(typeof(IServiceContainer));
+			container.AddService(typeof(IEventBindingService),
+				new CodeProviderEventBindingService(_codeProvider, (IServiceProvider) container));
+			_surface.BeginLoad(_loader);
+			if (_surface.IsLoaded)
+			{
 				_loaded = true;
 				// Mark as Modified on ComponentChanged
 				//
-				IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
-				changeService.ComponentChanged += new ComponentChangedEventHandler (OnComponentChanged);
+				IComponentChangeService changeService =
+					(IComponentChangeService) _surface.GetService(typeof(IComponentChangeService));
+				changeService.ComponentChanged += new ComponentChangedEventHandler(OnComponentChanged);
 				if (Loaded != null)
-					Loaded (this, EventArgs.Empty);
+					Loaded(this, EventArgs.Empty);
 			}
 
 			return _loaded;
 		}
 
-		private void OnComponentChanged (object sender, ComponentChangedEventArgs args)
+		private void OnComponentChanged(object sender, ComponentChangedEventArgs args)
 		{
 			_modified = true;
 			if (Modified != null)
-				Modified (this, EventArgs.Empty);
+				Modified(this, EventArgs.Empty);
 		}
 
-		public bool LoadSuccessful {
+		public bool LoadSuccessful
+		{
 			get { return _loaded; }
 			set { _loaded = value; }
 		}
 
-		public void Save ()
+		public void Save()
 		{
-			if (_loaded && _modified) {
-				_surface.Flush ();
+			if (_loaded && _modified)
+			{
+				_surface.Flush();
 				_modified = false;
 			}
 		}
 
-		public bool IsModified {
+		public bool IsModified
+		{
 			get { return _modified; }
 		}
 
-		public string FileName {
+		public string FileName
+		{
 			get { return _fileName; }
 		}
 
-		public string CodeBehindFileName {
-			get { return CodeProvider.GetCodeBehindFileName (_fileName); }
+		public string CodeBehindFileName
+		{
+			get { return CodeProvider.GetCodeBehindFileName(_fileName); }
 		}
 
 
-		public CodeProvider CodeProvider {
+		public CodeProvider CodeProvider
+		{
 			get { return _codeProvider; }
 		}
 
-		public Workspace Workspace {
+		public Workspace Workspace
+		{
 			get { return _workspace; }
 		}
 
-		public DesignSurface DesignSurface {
+		public DesignSurface DesignSurface
+		{
 			get { return _surface; }
 		}
 
-		public void Dispose ()
+		public void Dispose()
 		{
-			if (_surface.IsLoaded) {
-				IComponentChangeService changeService = (IComponentChangeService)_surface.GetService (typeof (IComponentChangeService));
-				changeService.ComponentChanged -= new ComponentChangedEventHandler (OnComponentChanged);
-				_surface.Dispose ();
+			if (_surface.IsLoaded)
+			{
+				IComponentChangeService changeService =
+					(IComponentChangeService) _surface.GetService(typeof(IComponentChangeService));
+				changeService.ComponentChanged -= new ComponentChangedEventHandler(OnComponentChanged);
+				_surface.Dispose();
 				_codeProvider = null;
 			}
 		}

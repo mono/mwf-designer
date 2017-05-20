@@ -30,41 +30,42 @@ using System.Collections.Generic;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-
 #if WITH_MONO_DESIGN
-using Mono.Design;
-using EventBindingService = Mono.Design.EventBindingService;
+using EventBindingService = System.ComponentModel.Design.EventBindingService;
+
 #endif
 
 namespace mwf_designer
 {
 	internal class CodeProviderEventBindingService : EventBindingService
 	{
-
 		private CodeProvider _codeProvider;
 
-		public CodeProviderEventBindingService (CodeProvider codeProvider, IServiceProvider provider) : base (provider)
+		public CodeProviderEventBindingService(CodeProvider codeProvider, IServiceProvider provider) : base(provider)
 		{
 			if (codeProvider == null)
-				throw new ArgumentNullException ("codeProvider");
+				throw new ArgumentNullException("codeProvider");
 			_codeProvider = codeProvider;
 		}
-					
-		protected override string CreateUniqueMethodName (IComponent component, EventDescriptor eventDescriptor)
+
+		protected override string CreateUniqueMethodName(IComponent component, EventDescriptor eventDescriptor)
 		{
 			string methodName = component.Site.Name + "_" + eventDescriptor.Name;
-			ICollection compatibleMethodNames = this.GetCompatibleMethods (eventDescriptor);
+			ICollection compatibleMethodNames = this.GetCompatibleMethods(eventDescriptor);
 			if (compatibleMethodNames.Count == 0)
 				return methodName;
 
 			bool interrupt = false;
 			int i = 0;
-			while (!interrupt) {
+			while (!interrupt)
+			{
 				string tmpName = methodName;
-				foreach (string existingName in compatibleMethodNames) {
+				foreach (string existingName in compatibleMethodNames)
+				{
 					if (existingName == tmpName)
-						tmpName += i.ToString ();
-					else {
+						tmpName += i.ToString();
+					else
+					{
 						methodName = tmpName;
 						interrupt = true;
 					}
@@ -75,26 +76,26 @@ namespace mwf_designer
 			return methodName;
 		}
 
-		protected override ICollection GetCompatibleMethods (EventDescriptor eventDescriptor)
+		protected override ICollection GetCompatibleMethods(EventDescriptor eventDescriptor)
 		{
-			return _codeProvider.GetCompatibleMethods (eventDescriptor.EventType.GetMethod ("Invoke").GetParameters ());
+			return _codeProvider.GetCompatibleMethods(eventDescriptor.EventType.GetMethod("Invoke").GetParameters());
 		}
 
 
-		protected override bool ShowCode (IComponent component, EventDescriptor e, string methodName)
+		protected override bool ShowCode(IComponent component, EventDescriptor e, string methodName)
 		{
-			return this.ShowCode (0);
+			return this.ShowCode(0);
 		}
 
-		protected override bool ShowCode (int lineNumber)
+		protected override bool ShowCode(int lineNumber)
 		{
 			// XXX: No text editor control
 			return false;
 		}
 
-		protected override bool ShowCode ()
+		protected override bool ShowCode()
 		{
-			return ShowCode (0);
+			return ShowCode(0);
 		}
 	}
 }

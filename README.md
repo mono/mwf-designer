@@ -1,0 +1,1 @@
+Remove "Mode.Design" project lost library connections,Add missing dynamic libraries for mono-5.0 x64, and build binary files.
