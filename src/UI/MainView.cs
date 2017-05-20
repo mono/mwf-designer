@@ -37,12 +37,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
-
 #if WITH_MONO_DESIGN
-using Mono.Design;
-using DocumentDesigner = Mono.Design.DocumentDesigner;
-using UndoEngine = Mono.Design.UndoEngine;
-using MenuCommandService = Mono.Design.MenuCommandService;
+using DocumentDesigner = System.Windows.Forms.Design.DocumentDesigner;
+using UndoEngine = System.ComponentModel.Design.UndoEngine;
+using MenuCommandService = System.ComponentModel.Design.MenuCommandService;
+
 #endif
 
 namespace mwf_designer
@@ -53,197 +52,217 @@ namespace mwf_designer
 		private ToolboxFiller _toolboxFiller;
 		private readonly string MODIFIED_MARKER = " *";
 
-		public MainView (string[] args)
+		public MainView(string[] args)
 		{
-			InitializeComponent ();
-			LoadWorkspace ();
+			InitializeComponent();
+			LoadWorkspace();
 			foreach (string s in args)
 				LoadFile(s);
 		}
 
-		private void LoadFile(string f) {
+		private void LoadFile(string f)
+		{
 			System.Console.WriteLine("LoadFile: {0}", f);
-			if (surfaceTabs.TabPages.ContainsKey (f)) {// tab page for file already existing
+			if (surfaceTabs.TabPages.ContainsKey(f))
+			{
+// tab page for file already existing
 				surfaceTabs.SelectedTab = surfaceTabs.TabPages[f];
-			} else {
-				if (CodeProvider.IsValidFile (f))
-					LoadDocument (f, _workspace);
+			}
+			else
+			{
+				if (CodeProvider.IsValidFile(f))
+					LoadDocument(f, _workspace);
 				else
-					MessageBox.Show ("No corresponding .Designer file found for " + f);
+					MessageBox.Show("No corresponding .Designer file found for " + f);
 			}
 		}
 
-		private void openToolStripMenuItem_Click (object sender, EventArgs e)
-		{			
-			OpenFileDialog dialog = new OpenFileDialog ();
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.CheckFileExists = true;
 			dialog.Multiselect = false;
 			dialog.Filter = "C# Source Code (*.cs)|*.cs|VB.NET Source Code (*.vb)|*.vb";
-			if (dialog.ShowDialog () == DialogResult.OK)
+			if (dialog.ShowDialog() == DialogResult.OK)
 				LoadFile(dialog.FileName);
 		}
 
-		private void LoadWorkspace ()
+		private void LoadWorkspace()
 		{
-			_workspace = new Workspace ();
-			surfaceTabs.SelectedIndexChanged += delegate {
-				UpdateWorkspaceActiveDocument ();
-			};
+			_workspace = new Workspace();
+			surfaceTabs.SelectedIndexChanged += delegate { UpdateWorkspaceActiveDocument(); };
 			_workspace.ActiveDocumentChanged += OnActiveDocumentChanged;
-			_workspace.Services.AddService (typeof (IToolboxService), (IToolboxService) toolbox);
-			_toolboxFiller = new ToolboxFiller (_workspace.References, toolbox);
-			AddErrorsTab ();
-			_workspace.Load ();
+			_workspace.Services.AddService(typeof(IToolboxService), (IToolboxService) toolbox);
+			_toolboxFiller = new ToolboxFiller(_workspace.References, toolbox);
+			AddErrorsTab();
+			_workspace.Load();
 		}
 
-		private void AddErrorsTab ()
+		private void AddErrorsTab()
 		{
-			ErrorListTabPage errors = new ErrorListTabPage ();
-			surfaceTabs.TabPages.Add (errors);
-			_workspace.Services.AddService (typeof (IUIService), (IUIService) errors);
+			ErrorListTabPage errors = new ErrorListTabPage();
+			surfaceTabs.TabPages.Add(errors);
+			_workspace.Services.AddService(typeof(IUIService), (IUIService) errors);
 		}
 
-		private void LoadDocument (string file, Workspace workspace)
+		private void LoadDocument(string file, Workspace workspace)
 		{
-			TabPage tab = new TabPage (Path.GetFileNameWithoutExtension (file));
+			TabPage tab = new TabPage(Path.GetFileNameWithoutExtension(file));
 			tab.Name = file; // the key
 
 			// loads and associates the tab page with the document
-			Document doc = workspace.CreateDocument (file, tab);
-			doc.Services.AddService (typeof (IMenuCommandService), new MenuCommandService (doc.Services));
-			doc.Load ();
-			doc.Services.AddService (typeof (UndoEngine), new UndoRedoEngine (doc.Services));
-			if (doc.LoadSuccessful) {
+			Document doc = workspace.CreateDocument(file, tab);
+			doc.Services.AddService(typeof(IMenuCommandService), new MenuCommandService(doc.Services));
+			doc.Load();
+			doc.Services.AddService(typeof(UndoEngine), new UndoRedoEngine(doc.Services));
+			if (doc.LoadSuccessful)
+			{
 				doc.Modified += OnDocumentModified;
 				workspace.ActiveDocument = doc;
-				((Control)doc.DesignSurface.View).Dock = DockStyle.Fill;
-				tab.Controls.Add ((Control)doc.DesignSurface.View);
-				surfaceTabs.SuspendLayout ();
-				surfaceTabs.TabPages.Add (tab);
-				surfaceTabs.ResumeLayout ();
+				((Control) doc.DesignSurface.View).Dock = DockStyle.Fill;
+				tab.Controls.Add((Control) doc.DesignSurface.View);
+				surfaceTabs.SuspendLayout();
+				surfaceTabs.TabPages.Add(tab);
+				surfaceTabs.ResumeLayout();
 				surfaceTabs.SelectedTab = surfaceTabs.TabPages[file];
-			} else {
-				MessageBox.Show ("Unable to load!");
-				tab.Dispose ();
-				workspace.CloseDocument (doc);
+			}
+			else
+			{
+				MessageBox.Show("Unable to load!");
+				tab.Dispose();
+				workspace.CloseDocument(doc);
 			}
 		}
 
-		private void OnDocumentModified (object sender, EventArgs args)
+		private void OnDocumentModified(object sender, EventArgs args)
 		{
-			if (!surfaceTabs.SelectedTab.Text.EndsWith (MODIFIED_MARKER))
+			if (!surfaceTabs.SelectedTab.Text.EndsWith(MODIFIED_MARKER))
 				surfaceTabs.SelectedTab.Text += MODIFIED_MARKER;
 		}
 
-		private void OnActiveDocumentChanged (object sender, ActiveDocumentChangedEventArgs args)
+		private void OnActiveDocumentChanged(object sender, ActiveDocumentChangedEventArgs args)
 		{
 			if (args.NewDocument != null)
-				propertyGrid.Update (args.NewDocument.Services);
+				propertyGrid.Update(args.NewDocument.Services);
 		}
 
-		private void CloseDocument (Document doc)
+		private void CloseDocument(Document doc)
 		{
 			doc.Modified -= OnDocumentModified;
-			surfaceTabs.TabPages.Remove (surfaceTabs.SelectedTab);
-			_workspace.CloseDocument (doc);
-			propertyGrid.Clear ();
+			surfaceTabs.TabPages.Remove(surfaceTabs.SelectedTab);
+			_workspace.CloseDocument(doc);
+			propertyGrid.Clear();
 		}
 
-		private void newToolStripMenuItem_Click (object sender, EventArgs e)
+		private void newToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			NewFileDialog dialog = new NewFileDialog (TemplateManager.AvailableTemplates);
-			if (dialog.ShowDialog () == DialogResult.OK) {
-				TemplateManager.WriteCode (dialog.Template, dialog.File, CodeProvider.GetCodeBehindFileName (dialog.File), 
-							   dialog.Namespace, dialog.Class);
-				this.LoadDocument (dialog.File, _workspace);
+			NewFileDialog dialog = new NewFileDialog(TemplateManager.AvailableTemplates);
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				TemplateManager.WriteCode(dialog.Template, dialog.File, CodeProvider.GetCodeBehindFileName(dialog.File),
+					dialog.Namespace, dialog.Class);
+				this.LoadDocument(dialog.File, _workspace);
 			}
 		}
 
-		private void UpdateWorkspaceActiveDocument ()
+		private void UpdateWorkspaceActiveDocument()
 		{
 			if (!(surfaceTabs.SelectedTab is ErrorListTabPage))
-				_workspace.ActiveDocument = _workspace.GetDocument (surfaceTabs.SelectedTab);
+				_workspace.ActiveDocument = _workspace.GetDocument(surfaceTabs.SelectedTab);
 			else
 				_workspace.ActiveDocument = null;
 		}
 
 
-		private void exitToolStripMenuItem_Click (object sender, EventArgs e)
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			this.Close ();
+			this.Close();
 		}
 
-		private void saveToolStripMenuItem_Click (object sender, EventArgs e)
+		private void saveToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (_workspace.ActiveDocument != null && _workspace.ActiveDocument.IsModified) {
-				_workspace.ActiveDocument.Save ();
-				surfaceTabs.SelectedTab.Text = Path.GetFileNameWithoutExtension (_workspace.ActiveDocument.FileName);
+			if (_workspace.ActiveDocument != null && _workspace.ActiveDocument.IsModified)
+			{
+				_workspace.ActiveDocument.Save();
+				surfaceTabs.SelectedTab.Text = Path.GetFileNameWithoutExtension(_workspace.ActiveDocument.FileName);
 			}
 		}
 
-		private void closeToolStripMenuItem_Click (object sender, EventArgs e)
+		private void closeToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (!(surfaceTabs.SelectedTab is ErrorListTabPage))
 				if (_workspace.ActiveDocument != null)
-					CloseDocument (_workspace.ActiveDocument);
+					CloseDocument(_workspace.ActiveDocument);
 		}
 
-		private void OnReferences_Clicked (object sender, EventArgs e)
+		private void OnReferences_Clicked(object sender, EventArgs e)
 		{
-			new ReferencesDialog (_workspace.References).ShowDialog ();
+			new ReferencesDialog(_workspace.References).ShowDialog();
 		}
-		
-		private void OnUndo_Clicked (object sender, EventArgs args)
+
+		private void OnUndo_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				UndoRedoEngine undoEngine = _workspace.ActiveDocument.DesignSurface.GetService (typeof (UndoEngine)) as UndoRedoEngine;
+			if (_workspace.ActiveDocument != null)
+			{
+				UndoRedoEngine undoEngine =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(UndoEngine)) as UndoRedoEngine;
 				if (undoEngine != null)
-					undoEngine.Undo ();
+					undoEngine.Undo();
 			}
 		}
 
-		private void OnRedo_Clicked (object sender, EventArgs args)
+		private void OnRedo_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				UndoRedoEngine undoEngine = _workspace.ActiveDocument.DesignSurface.GetService (typeof (UndoEngine)) as UndoRedoEngine;
+			if (_workspace.ActiveDocument != null)
+			{
+				UndoRedoEngine undoEngine =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(UndoEngine)) as UndoRedoEngine;
 				if (undoEngine != null)
-					undoEngine.Redo ();
+					undoEngine.Redo();
 			}
 		}
 
-		private void OnCut_Clicked (object sender, EventArgs args)
+		private void OnCut_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+			if (_workspace.ActiveDocument != null)
+			{
+				IMenuCommandService menuCommands =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(IMenuCommandService)) as IMenuCommandService;
 				if (menuCommands != null)
-					menuCommands.FindCommand (StandardCommands.Cut).Invoke ();
+					menuCommands.FindCommand(StandardCommands.Cut).Invoke();
 			}
 		}
 
-		private void OnCopy_Clicked (object sender, EventArgs args)
+		private void OnCopy_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+			if (_workspace.ActiveDocument != null)
+			{
+				IMenuCommandService menuCommands =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(IMenuCommandService)) as IMenuCommandService;
 				if (menuCommands != null)
-					menuCommands.FindCommand (StandardCommands.Copy).Invoke ();
+					menuCommands.FindCommand(StandardCommands.Copy).Invoke();
 			}
 		}
 
-		private void OnPaste_Clicked (object sender, EventArgs args)
+		private void OnPaste_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+			if (_workspace.ActiveDocument != null)
+			{
+				IMenuCommandService menuCommands =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(IMenuCommandService)) as IMenuCommandService;
 				if (menuCommands != null)
-					menuCommands.FindCommand (StandardCommands.Paste).Invoke ();
+					menuCommands.FindCommand(StandardCommands.Paste).Invoke();
 			}
 		}
 
-		private void OnDelete_Clicked (object sender, EventArgs args)
+		private void OnDelete_Clicked(object sender, EventArgs args)
 		{
-			if (_workspace.ActiveDocument != null) {
-				IMenuCommandService menuCommands = _workspace.ActiveDocument.DesignSurface.GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+			if (_workspace.ActiveDocument != null)
+			{
+				IMenuCommandService menuCommands =
+					_workspace.ActiveDocument.DesignSurface.GetService(typeof(IMenuCommandService)) as IMenuCommandService;
 				if (menuCommands != null)
-					menuCommands.FindCommand (StandardCommands.Delete).Invoke ();
+					menuCommands.FindCommand(StandardCommands.Delete).Invoke();
 			}
 		}
 	}

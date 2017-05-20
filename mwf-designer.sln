@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mwf-designer", "mwf-designer.csproj", "{E8A1D7EA-AB41-4908-8715-F76FC155A164}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Design", "deps\Mono.Design\Mono.Design.csproj", "{53DB609E-CCAB-40F8-BA30-E98B9111627A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,10 +13,6 @@ Global
 		{E8A1D7EA-AB41-4908-8715-F76FC155A164}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8A1D7EA-AB41-4908-8715-F76FC155A164}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8A1D7EA-AB41-4908-8715-F76FC155A164}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53DB609E-CCAB-40F8-BA30-E98B9111627A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53DB609E-CCAB-40F8-BA30-E98B9111627A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53DB609E-CCAB-40F8-BA30-E98B9111627A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53DB609E-CCAB-40F8-BA30-E98B9111627A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

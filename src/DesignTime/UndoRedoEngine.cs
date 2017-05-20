@@ -30,98 +30,104 @@ using System.Collections.Generic;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-
 #if WITH_MONO_DESIGN
-using Mono.Design;
-using UndoEngine = Mono.Design.UndoEngine;
+using UndoEngine = System.ComponentModel.Design.UndoEngine;
+
 #endif
 
 namespace mwf_designer
 {
-	internal class UndoRedoEngine : UndoEngine
-	{
-		private Stack<UndoUnit> _undoUnits;
-		private Stack<UndoUnit> _redoUnits;
+    internal class UndoRedoEngine : UndoEngine
+    {
+        private Stack<UndoUnit> _undoUnits;
+        private Stack<UndoUnit> _redoUnits;
 
-		public UndoRedoEngine (IServiceProvider provider) : base (provider)
-		{
-			_undoUnits = new Stack<UndoUnit> ();
-			_redoUnits = new Stack<UndoUnit> ();
-		}
+        public UndoRedoEngine(IServiceProvider provider) : base(provider)
+        {
+            _undoUnits = new Stack<UndoUnit>();
+            _redoUnits = new Stack<UndoUnit>();
+        }
 
-		protected override void AddUndoUnit (UndoEngine.UndoUnit unit) 
-		{
-			_undoUnits.Push (unit);
-			_redoUnits.Clear ();
-		}
+        protected override void AddUndoUnit(UndoEngine.UndoUnit unit)
+        {
+            _undoUnits.Push(unit);
+            _redoUnits.Clear();
+        }
 
-		protected override void DiscardUndoUnit (UndoEngine.UndoUnit unit) 
-		{
-			base.DiscardUndoUnit (unit);
-			if (_undoUnits.Count > 0 && Object.ReferenceEquals (unit, _undoUnits.Peek ()))
-				_undoUnits.Pop ();
-		}
+        protected override void DiscardUndoUnit(UndoEngine.UndoUnit unit)
+        {
+            base.DiscardUndoUnit(unit);
+            if (_undoUnits.Count > 0 && Object.ReferenceEquals(unit, _undoUnits.Peek()))
+                _undoUnits.Pop();
+        }
 
-		public void Undo ()
-		{
-			this.Undo (1);
-		}
+        public void Undo()
+        {
+            this.Undo(1);
+        }
 
-		public void Undo (int actionsCount)
-		{
-			if (actionsCount <= 0 || actionsCount > _undoUnits.Count)
-				return;
-			for (; actionsCount != 0; actionsCount--) {
-				UndoUnit unit = _undoUnits.Pop ();
-				// Console.WriteLine ("undo: " + unit.Name);
-				unit.Undo ();
-				_redoUnits.Push (unit);
-			}
-		}
+        public void Undo(int actionsCount)
+        {
+            if (actionsCount <= 0 || actionsCount > _undoUnits.Count)
+                return;
+            for (; actionsCount != 0; actionsCount--)
+            {
+                UndoUnit unit = _undoUnits.Pop();
+                // Console.WriteLine ("undo: " + unit.Name);
+                unit.Undo();
+                _redoUnits.Push(unit);
+            }
+        }
 
-		public void Redo ()
-		{
-			this.Redo (1);
-		}
+        public void Redo()
+        {
+            this.Redo(1);
+        }
 
-		public void Redo (int actionsCount)
-		{
-			if (actionsCount <= 0 || actionsCount > _redoUnits.Count)
-				return;
+        public void Redo(int actionsCount)
+        {
+            if (actionsCount <= 0 || actionsCount > _redoUnits.Count)
+                return;
 
-			for (; actionsCount != 0; actionsCount--) {
-				UndoUnit unit = _redoUnits.Pop ();
-				// Console.WriteLine ("redo: " + unit.Name);
-				unit.Undo ();
-				_undoUnits.Push (unit);
-			}
-		}
+            for (; actionsCount != 0; actionsCount--)
+            {
+                UndoUnit unit = _redoUnits.Pop();
+                // Console.WriteLine ("redo: " + unit.Name);
+                unit.Undo();
+                _undoUnits.Push(unit);
+            }
+        }
 
-		public List<string> UndoUnitsNames {
-			get {
-				List<string> names = new List<string> ();
-				foreach (UndoUnit unit in _undoUnits)
-					names.Add (unit.Name);
-				return names; 
-			}
-		}
+        public List<string> UndoUnitsNames
+        {
+            get
+            {
+                List<string> names = new List<string>();
+                foreach (UndoUnit unit in _undoUnits)
+                    names.Add(unit.Name);
+                return names;
+            }
+        }
 
-		public List<string> RedoUnitsNames {
-			get {
-				List<string> names = new List<string> ();
-				foreach (UndoUnit unit in _redoUnits)
-					names.Add (unit.Name);
-				return names; 
-			}
-		}
+        public List<string> RedoUnitsNames
+        {
+            get
+            {
+                List<string> names = new List<string>();
+                foreach (UndoUnit unit in _redoUnits)
+                    names.Add(unit.Name);
+                return names;
+            }
+        }
 
-		protected override void Dispose (bool disposing)
-		{
-			if (disposing) {
-				_undoUnits.Clear ();
-				_redoUnits.Clear ();
-			}
-			base.Dispose (disposing);
-		}
-	}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _undoUnits.Clear();
+                _redoUnits.Clear();
+            }
+            base.Dispose(disposing);
+        }
+    }
 }

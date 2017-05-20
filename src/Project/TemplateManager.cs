@@ -35,14 +35,13 @@ namespace mwf_designer
 {
 	internal static class TemplateManager
 	{
-
-		public static void WriteCode (string templateName, string fileName, string codeBehindFileName, 
-										 string namespaceName, string className)
+		public static void WriteCode(string templateName, string fileName, string codeBehindFileName,
+			string namespaceName, string className)
 		{
-
 			string main = null;
 			string codeBehind = null;
-			switch (templateName) {
+			switch (templateName)
+			{
 				case "Form C#":
 					main = _formCSharpMain;
 					codeBehind = _formCSharpCodeBehind;
@@ -51,34 +50,37 @@ namespace mwf_designer
 					return;
 			}
 
-			while (main.IndexOf ("${namespace}") != -1)
-				main = main.Replace ("${namespace}", namespaceName);
-			while (codeBehind.IndexOf ("${namespace}") != -1)
-				codeBehind = codeBehind.Replace ("${namespace}", namespaceName);
+			while (main.IndexOf("${namespace}") != -1)
+				main = main.Replace("${namespace}", namespaceName);
+			while (codeBehind.IndexOf("${namespace}") != -1)
+				codeBehind = codeBehind.Replace("${namespace}", namespaceName);
 
-			while (main.IndexOf ("${class}") != -1)
-				main = main.Replace ("${class}", className);
-			while (codeBehind.IndexOf ("${class}") != -1)
-				codeBehind = codeBehind.Replace ("${class}", className);
+			while (main.IndexOf("${class}") != -1)
+				main = main.Replace("${class}", className);
+			while (codeBehind.IndexOf("${class}") != -1)
+				codeBehind = codeBehind.Replace("${class}", className);
 
 			// write main file
-			FileStream stream = File.OpenWrite (fileName);
-			byte [] bytes = Encoding.Default.GetBytes (main);
-			stream.Write (bytes, 0, bytes.Length);
-			stream.Close ();
-			stream.Dispose ();
+			FileStream stream = File.OpenWrite(fileName);
+			byte[] bytes = Encoding.Default.GetBytes(main);
+			stream.Write(bytes, 0, bytes.Length);
+			stream.Close();
+			stream.Dispose();
 
 			// write codebehind file
-			stream = File.OpenWrite (codeBehindFileName);
-			bytes = Encoding.Default.GetBytes (codeBehind);
-			stream.Write (bytes, 0, bytes.Length);
-			stream.Close ();
-			stream.Dispose ();
+			stream = File.OpenWrite(codeBehindFileName);
+			bytes = Encoding.Default.GetBytes(codeBehind);
+			stream.Write(bytes, 0, bytes.Length);
+			stream.Close();
+			stream.Dispose();
 		}
 
-		public static string[] AvailableTemplates {
-			get {
-				return new string [] {
+		public static string[] AvailableTemplates
+		{
+			get
+			{
+				return new string[]
+				{
 					"Form C#",
 				};
 			}
@@ -133,6 +135,5 @@ namespace ${namespace}
 		#endregion
 	}
 }";
-
 	}
 }

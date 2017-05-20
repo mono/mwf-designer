@@ -34,70 +34,71 @@ using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Windows.Forms.Design;
-
-
 #if WITH_MONO_DESIGN
-using Mono.Design;
-using CodeDomDesignerLoader = Mono.Design.CodeDomDesignerLoader;
+using CodeDomDesignerLoader = System.ComponentModel.Design.Serialization.CodeDomDesignerLoader;
+
 #endif
 
 namespace mwf_designer
 {
 	internal class CodeProviderDesignerLoader : CodeDomDesignerLoader
 	{
-
 		private CodeProvider _provider;
 
-		public CodeProviderDesignerLoader (CodeProvider provider)
+		public CodeProviderDesignerLoader(CodeProvider provider)
 		{
 			if (provider == null)
-				throw new ArgumentNullException ("provider");
+				throw new ArgumentNullException("provider");
 			_provider = provider;
 		}
 
-		protected override CodeDomProvider CodeDomProvider {
+		protected override CodeDomProvider CodeDomProvider
+		{
 			get { return _provider.CodeDomProvider; }
 		}
 
-		protected override ITypeResolutionService TypeResolutionService { 
-			get { return base.GetService (typeof (ITypeResolutionService)) as ITypeResolutionService; }
-		}
-
-		protected override CodeCompileUnit Parse ()
+		protected override ITypeResolutionService TypeResolutionService
 		{
-			return _provider.Parse ();
+			get { return base.GetService(typeof(ITypeResolutionService)) as ITypeResolutionService; }
 		}
 
-		protected override void Write (CodeCompileUnit unit)
+		protected override CodeCompileUnit Parse()
 		{
-			_provider.Write (unit);
+			return _provider.Parse();
 		}
 
-		protected override void OnEndLoad (bool successful, ICollection errors)
+		protected override void Write(CodeCompileUnit unit)
 		{
-			ReportErrors (errors);
-			base.OnEndLoad (successful, errors);
+			_provider.Write(unit);
 		}
 
-		protected override void ReportFlushErrors (ICollection errors)
+		protected override void OnEndLoad(bool successful, ICollection errors)
 		{
-			ReportErrors (errors);
+			ReportErrors(errors);
+			base.OnEndLoad(successful, errors);
 		}
 
-		private void ReportErrors (ICollection errors)
+		protected override void ReportFlushErrors(ICollection errors)
+		{
+			ReportErrors(errors);
+		}
+
+		private void ReportErrors(ICollection errors)
 		{
 			if (errors == null)
 				return;
 
-			IUIService service = base.GetService (typeof (IUIService)) as IUIService;
-			if (service != null) {
-				foreach (object error in errors) {
+			IUIService service = base.GetService(typeof(IUIService)) as IUIService;
+			if (service != null)
+			{
+				foreach (object error in errors)
+				{
 					if (error is Exception)
-						service.ShowError ((Exception) error);
+						service.ShowError((Exception) error);
 					else if (error is string)
-						service.ShowError ((string) error);
+						service.ShowError((string) error);
 					else
-						service.ShowError (error.ToString ());
+						service.ShowError(error.ToString());
 				}
 			}
 		}

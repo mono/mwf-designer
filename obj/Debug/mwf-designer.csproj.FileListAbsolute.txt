@@ -1,0 +1,7 @@
+N:\Code\mono\tools\mwf-designer\build\mwf-designer.exe
+N:\Code\mono\tools\mwf-designer\build\mwf-designer.pdb
+N:\Code\mono\tools\mwf-designer\build\ICSharpCode.NRefactory.dll
+N:\Code\mono\tools\mwf-designer\build\System.Design.dll
+N:\Code\mono\tools\mwf-designer\obj\Debug\mwf-designer.csprojResolveAssemblyReference.cache
+N:\Code\mono\tools\mwf-designer\obj\Debug\mwf-designer.exe
+N:\Code\mono\tools\mwf-designer\obj\Debug\mwf-designer.pdb
