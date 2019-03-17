@@ -21,34 +21,34 @@ def main ():
         print (exc)
 
 def fetch_source_code (files):
-    for file in files:
-        directory = os.path.dirname (file)
+    for file_ in files:
+        directory = os.path.dirname (file_)
         if directory != "": # quick hack to only download assembly files and not the ones we already have
             if not os.path.exists (directory):
                 os.makedirs (directory)
             for i in range (1, 4): # retry 3 times
                 try:
-                    webFile = urllib.request.urlopen (file_to_url (file))
-                    localFile = open (file, 'wb+')
+                    webFile = urllib.request.urlopen (file_to_url (file_))
+                    localFile = open (file_, 'wb+')
                     localFile.write (webFile.read())
                     webFile.close ()
                     localFile.close ()
-                    print ("A " + file)
+                    print ("A " + file_)
                     break
                 except Exception as exc:
-                    print ("E " + file)
+                    print ("E " + file_)
                     print (exc)
 
-def file_to_url (file):
-    return "http://anonsvn.mono-project.com/viewvc/trunk/mcs/" + file + "?view=co"
+def file_to_url (file_):
+    return "https://raw.githubusercontent.com/mono/mono/master/mcs/" + file_
 
 def get_files ():
     try:
-        file = open ("Mono.Design.sources")
+        file_ = open ("Mono.Design.sources")
         filesList = []
-        for fileEntry in file:
+        for fileEntry in file_:
             filesList.append (fileEntry.strip ())
-        file.close ()
+        file_.close ()
         return filesList
     except Exception:
         print ("Unable to open file: Mono.Design.sources")

@@ -11,7 +11,7 @@ all: ${BUILD_DIR}/${ASSEMBLY}
 
 ${BUILD_DIR}/${ASSEMBLY}: ${SOURCES}
 	mkdir -p ${BUILD_DIR}
-	MCS_COLORS=disable gmcs -debug -r:${REFERENCES} -out:${BUILD_DIR}/${ASSEMBLY} ${SOURCES}
+	MCS_COLORS=disable mcs -debug -r:${REFERENCES} -out:${BUILD_DIR}/${ASSEMBLY} ${SOURCES}
 
 run: all
 	cp ${DEPS_DIR}/*.dll ${BUILD_DIR}
@@ -20,7 +20,7 @@ run: all
 
 mono-design: all
 	cd ${DEPS_DIR}/Mono.Design && make
-	export MCS_COLORS=disable;gmcs -debug -r:${REFERENCES},${DEPS_DIR}/Mono.Design.dll -out:${BUILD_DIR}/${ASSEMBLY} ${SOURCES}
+	export MCS_COLORS=disable;mcs -debug -r:${REFERENCES},${DEPS_DIR}/Mono.Design.dll -out:${BUILD_DIR}/${ASSEMBLY} ${SOURCES}
 
 mono-design-update:
 	cd ${DEPS_DIR}/Mono.Design && make update
