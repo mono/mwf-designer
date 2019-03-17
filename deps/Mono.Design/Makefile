@@ -19,6 +19,6 @@ update: clean
 
 generate-md:
 ifeq (,$(findstring .generated,$(wildcard .*)))
-	python generate-mono-design.py
+	python3 generate-mono-design.py
 	touch .generated
 endif
