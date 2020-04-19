@@ -1,3 +1,10 @@
+
+This repository is very old Google Summer of Code project work, which is not maintened nor relevant nowadays. Most of the "Design-Time" code was at the time merged into the Mono class library.
+
+
+
+
+
 === On Mono ===
 
 make && make run
