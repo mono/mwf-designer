@@ -4,7 +4,7 @@ make && make run
 
 === On Microsoft .NET with Visual Studio ===
 
-1) Install Python - http://python.org/download/
+1) Install Python 3 - http://python.org/download/
 2) Run "Prepare Visual Studio Build.bat"
 3) Open mwf-designer.sln with Visual Studio and you are done!
 
