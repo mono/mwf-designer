@@ -1,3 +1,4 @@
 build/
 deps/Mono.Design/.generated
+deps/Mono.Design/build/
 deps/Mono.Design/class/
