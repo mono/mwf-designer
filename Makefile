@@ -24,3 +24,6 @@ mono-design: all
 
 mono-design-update:
 	cd ${DEPS_DIR}/Mono.Design && make update
+
+clean:
+	rm -rf build/ deps/Mono.Design/.generated deps/Mono.Design/build/ deps/Mono.Design/class/
